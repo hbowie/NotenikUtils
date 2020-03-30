@@ -1,3 +1,3 @@
 # NotenikUtils
 
-A description of this package.
+General utilities used by Notenik, but available for use by any application. 
