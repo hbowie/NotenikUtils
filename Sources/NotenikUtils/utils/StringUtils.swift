@@ -12,7 +12,7 @@
 import Foundation
 
 /// A collection of utility methods for working with Strings.
-class StringUtils {
+public class StringUtils {
     
     private init() {
         
@@ -55,7 +55,7 @@ class StringUtils {
     /// - Returns: The lowest common denominator, allowing easy comparison,
     ///            and eliminating trivial differences.
     ///
-    static func toCommon(_ str : String) -> String {
+    public static func toCommon(_ str : String) -> String {
         let lower = str.lowercased()
         var common = ""
         for c in lower {
@@ -76,7 +76,7 @@ class StringUtils {
     ///
     /// - Parameter from: The file name to be converted.
     /// - Returns: The converted file name.
-    static func toCommonFileName(_ from: String) -> String {
+    public static func toCommonFileName(_ from: String) -> String {
         var out = ""
         var whiteSpace = true
         var index = from.startIndex
