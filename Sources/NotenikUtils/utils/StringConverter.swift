@@ -11,15 +11,15 @@
 
 import Foundation
 
-class StringConverter {
+public class StringConverter {
     
     var fromToList: [StringFromTo] = []
     
-    init() {
+    public init() {
         
     }
     
-    func addHTML() {
+    public func addHTML() {
         add(from: "\"",  to: "&quot;")
         add(from: "'",   to: "&apos;")
         add(from: "&",   to: "&amp;")
@@ -29,7 +29,7 @@ class StringConverter {
     }
     
     /// Add standard XML conversions to the from/to list.
-    func addXML() {
+    public func addXML() {
         add(from: "\"",  to: "&quot;")
         add(from: "'",   to: "&apos;")
         add(from: "&",   to: "&amp;")
@@ -40,7 +40,7 @@ class StringConverter {
     
     /// Add conversions of various html entities back to normal straight single
     /// quotes, since email clients often seem to have trouble with the entities. 
-    func addEmailQuotes() {
+    public func addEmailQuotes() {
         add(from: "&lsquo;", to: "'")
         add(from: "&rsquo;", to: "'")
         add(from: "&#8217;", to: "'")
@@ -49,7 +49,7 @@ class StringConverter {
     }
     
     /// Add conversions to eliminate HTML break tags. 
-    func addNoBreaks() {
+    public func addNoBreaks() {
         add(from: "<br>", to: "")
         add(from: "<br/>", to: "")
         add(from: "<br />", to: "")
@@ -62,7 +62,7 @@ class StringConverter {
     }
     
     /// Convert a string using the from/to list. 
-    func convert(from: String) -> String {
+    public func convert(from: String) -> String {
         var to = ""
         var index = from.startIndex
         while index < from.endIndex {

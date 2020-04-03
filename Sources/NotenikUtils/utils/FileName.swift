@@ -13,54 +13,54 @@ import Foundation
 
 /// A class offering easy access to the various components of
 /// a path to a file or directory.
-class FileName: CustomStringConvertible {
+public class FileName: CustomStringConvertible {
     
     /// The complete path, including base file name and extension.
-    var fileNameStr = ""
+    public var fileNameStr = ""
     
     /// File extension without a leading dot
-    var ext = ""
+    public var ext = ""
     
     /// Lowercase file extension, without a leading dot
-    var extLower = ""
+    public var extLower = ""
     
     /// Base file name, without preceding path or following extension.
-    var base = ""
+    public var base = ""
     
     /// Base file name converted to all lower-case.
-    var baseLower = ""
+    public var baseLower = ""
     
     /// The path leading up to, but not including, any file name.
-    var path = ""
+    public var path = ""
     
     /// The lowest level folder in the supplied file name path.
-    var folder = ""
+    public var folder = ""
     
     /// An array of all the folders found in the path.
-    var folders: [String] = []
+    public var folders: [String] = []
     
     /// Do we think this is a file or a directory?
     var fileOrDir: FileOrDirectory = .unknown
     
-    var readme = false
-    var dotfile = false
-    var template = false
-    var noteExt = false
-    var infofile = false
-    var licenseFile = false
+    public var readme = false
+    public var dotfile = false
+    public var template = false
+    public var noteExt = false
+    public var infofile = false
+    public var licenseFile = false
     var conflictedCopy = false
-    var collectionParms = false
+    public var collectionParms = false
     
-    var description: String {
+    public var description: String {
         return fileNameStr
     }
     
-    var url: URL? {
+    public var url: URL? {
         return StringUtils.urlFrom(str: fileNameStr)
     }
     
     /// The file name, excluding the path to the folders containing the file. 
-    var fileName: String {
+    public var fileName: String {
         if base.count == 0 {
             return ""
         } else {
@@ -69,18 +69,18 @@ class FileName: CustomStringConvertible {
     }
     
     /// Initialize with no initial value
-    init() {
+    public init() {
         
     }
     
     /// Initialize with a String value
-    convenience init (_ value: String) {
+    public convenience init (_ value: String) {
         self.init()
         set(value)
     }
     
     /// Initialize with a URL
-    convenience init (_ url: URL) {
+    public convenience init (_ url: URL) {
         self.init()
         set(url)
     }
@@ -258,7 +258,7 @@ class FileName: CustomStringConvertible {
     ///
     /// - Parameter fn2: The possible parent to this file/folder.
     /// - Returns: True if this file is beneath fn2, otherwise false. 
-    func isBeneath(_ fn2: FileName) -> Bool {
+    public func isBeneath(_ fn2: FileName) -> Bool {
         guard folders.count > fn2.folders.count else { return false }
         var i = 0
         var matched = true
@@ -279,7 +279,7 @@ class FileName: CustomStringConvertible {
     ///
     /// - Parameter path: A possible relative path.
     /// - Returns: An absolute path.
-    func resolveRelative(path: String) -> String {
+    public func resolveRelative(path: String) -> String {
         
         // If this is an absolute path, then don't mess with it
         guard !path.hasPrefix("/") else { return path }

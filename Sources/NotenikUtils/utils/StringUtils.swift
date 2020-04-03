@@ -24,7 +24,7 @@ public class StringUtils {
     
     /// Write a single column's worth of data. The writer will enclose in quotation marks
     /// and encode embedded quotation marks as needed (with two quote chars representing one).
-    static func encaseInQuotesAsNeeded(_ value: String, sepChar: Character = "\t") -> String {
+    public static func encaseInQuotesAsNeeded(_ value: String, sepChar: Character = "\t") -> String {
         var v = value
         var quotesNeeded = false
         var i = v.startIndex
@@ -115,7 +115,7 @@ public class StringUtils {
     /// surround the URL with anchor start and end tags, with the href value
     /// pointing to the URL that was found. Leave any preceding or trailing
     /// characters in place. 
-    static func convertLinks(_ from: String) -> String {
+    public static func convertLinks(_ from: String) -> String {
         var out = ""
         var index = from.startIndex
         var priorChar: Character = " "
@@ -166,7 +166,7 @@ public class StringUtils {
     /// - Parameter from: The string to be purified.
     /// - Returns: The purified string.
     ///
-    static func purifyPunctuation(_ from: String) -> String {
+    public static func purifyPunctuation(_ from: String) -> String {
         var out = ""
         
         var pendingSpaces = 0
@@ -185,7 +185,7 @@ public class StringUtils {
         return out
     }
     
-    static func truncateOrPad(_ from: String, toLength: Int, keepOnRight: Bool = false) -> String {
+    public static func truncateOrPad(_ from: String, toLength: Int, keepOnRight: Bool = false) -> String {
         if toLength == from.count {
             return from
         } else if toLength < from.count {
@@ -213,7 +213,7 @@ public class StringUtils {
     ///               in the string; the second position indicates the desired case for the first character in each word;
     ///               the third position inidcates the desired case for the remaining letters. 
     ///   - delimiter: The desired delimiter to be placed between words.
-    static func wordDemarcation(_ from: String, caseMods: [String], delimiter: String) -> String {
+    public static func wordDemarcation(_ from: String, caseMods: [String], delimiter: String) -> String {
         var out = ""
         var demarcationPending = false
         var lastChar: Character = " "
@@ -258,7 +258,7 @@ public class StringUtils {
         return out
     }
     
-    static func underscoresForSpaces(_ from: String) -> String {
+    public static func underscoresForSpaces(_ from: String) -> String {
         var out = ""
         var pendingSpaces = 0
         for char in from {
@@ -278,7 +278,7 @@ public class StringUtils {
     }
     
     /// Turn this string into a likely WikiMedia page name.
-    static func wikiMediaPage(_ from: String) -> String {
+    public static func wikiMediaPage(_ from: String) -> String {
         var out = ""
         var pendingSpaces = 0
         for char in from {
@@ -329,7 +329,7 @@ public class StringUtils {
     
     /// Extract the beginning of a long piece of text, trying to end with
     /// a complete sentence. 
-    static func summarize(_ str: String, max: Int = 250) -> String {
+    public static func summarize(_ str: String, max: Int = 250) -> String {
         guard str.count > max else { return str }
         var sentenceCount = 0
         var index = str.startIndex
@@ -359,7 +359,7 @@ public class StringUtils {
     }
     
     // Take a String and make a readable file name (without path or extension) from it
-    static func toReadableFilename(_ from: String) -> String {
+    public static func toReadableFilename(_ from: String) -> String {
         var str = from
         if str.hasPrefix("http://") {
             str.removeFirst(7)
@@ -435,7 +435,7 @@ public class StringUtils {
     /// If the passed character is at the end of its range, then the first
     /// character in the range will be returned. For example, incrementing '9'
     /// returns zero, incrementing 'z' returns 'a', incrementing 'Z' returns 'A'
-    static func increment(_ toInc : Character) -> Character {
+    public static func increment(_ toInc : Character) -> Character {
         var found = false
         var nextChar : Character = toInc
         if isDigit(toInc) {
@@ -473,42 +473,42 @@ public class StringUtils {
     }
     
     /// Change the leading character to lower case
-    static func toLowerFirstChar(_ str: String) -> String {
+    public static func toLowerFirstChar(_ str: String) -> String {
         return str.prefix(1).lowercased() + str.dropFirst()
     }
     
     /// Change the leading character to upper case
-    static func toUpperFirstChar(_ str: String) -> String {
+    public static func toUpperFirstChar(_ str: String) -> String {
         return str.prefix(1).uppercased() + str.dropFirst()
     }
     
     /// Is this character a digit in the range 0 - 9?
-    static func isDigit(_ c : Character) -> Bool {
+    public static func isDigit(_ c : Character) -> Bool {
         return "0"..."9" ~= c
     }
     
     /// Is this character a normal alphabetic character?
-    static func isAlpha(_ c : Character) -> Bool {
+    public static func isAlpha(_ c : Character) -> Bool {
         return ("a"..."z" ~= c) || ("A"..."Z" ~= c)
     }
     
     /// Is this character a lower case letter?
-    static func isLower(_ c : Character) -> Bool {
+    public static func isLower(_ c : Character) -> Bool {
         return "a"..."z" ~= c
     }
     
     /// Is this character some form of white space?
-    static func isWhitespace(_ c : Character) -> Bool {
+    public static func isWhitespace(_ c : Character) -> Bool {
         return c == " " || c == "\t" || c == "\n" || c == "\r"
     }
     
     /// Remove white spaces from front and back of string
-    static func trim(_ inStr: String) -> String {
+    public static func trim(_ inStr: String) -> String {
         return inStr.trimmingCharacters(in: .whitespaces)
     }
     
     /// Remove white space and Markdown heading characters from front and back of string
-    static func trimHeading(_ inStr: String) -> String {
+    public static func trimHeading(_ inStr: String) -> String {
         guard inStr.count > 0 else { return "" }
         var headingFound = false
         var start = inStr.startIndex
@@ -534,13 +534,13 @@ public class StringUtils {
     }
     
     /// Return the character located at the given position within the passed string
-    static func charAt (index: Int, str: String) -> Character {
+    public static func charAt (index: Int, str: String) -> Character {
         let s = str.index(str.startIndex, offsetBy: index)
         return charAt(index: s, str: str)
     }
     
     /// Return the character located at the given position within the passed string
-    static func charAt (index : String.Index, str: String) -> Character {
+    public static func charAt (index : String.Index, str: String) -> Character {
         let substr = str[index...index]
         var char : Character = " "
         for c in substr {
@@ -550,7 +550,7 @@ public class StringUtils {
     }
     
     /// Replace a character at the given index position
-    static func replaceChar(i : Int, str : inout String, newChar : Character) {
+    public static func replaceChar(i : Int, str : inout String, newChar : Character) {
         let index = str.index(str.startIndex, offsetBy: i)
         let indexNext = str.index(index, offsetBy: 1)
         let range = index..<indexNext
@@ -563,7 +563,7 @@ public class StringUtils {
     }
     
     /// Let's try to convert a string into a URL, replacing any spaces with encoded ('%20') strings.
-    static func urlFrom(str: String) -> URL? {
+    public static func urlFrom(str: String) -> URL? {
         var encoded = ""
         var lookingForColon = true
         var colonFound = false
@@ -615,7 +615,7 @@ extension String {
     ///            don't match, or if the matching takes us beyond the end
     ///            of this string.
     ///
-    func indexedEquals(index: String.Index, str2: String) -> Bool {
+    public func indexedEquals(index: String.Index, str2: String) -> Bool {
         guard self[index] == str2[str2.startIndex] else { return false }
         var strIndex = self.index(index, offsetBy: 1)
         var str2Index = str2.index(str2.startIndex, offsetBy: 1)
@@ -641,7 +641,7 @@ extension String {
     /// - Returns: The character at the offset location, or a space, if the
     ///            offset plus the index takes us beyond the end of the string.
     ///
-    func charAtOffset(index: String.Index, offsetBy: Int) -> Character {
+    public func charAtOffset(index: String.Index, offsetBy: Int) -> Character {
         var ix = index
         var offset = offsetBy
         var char: Character = " "

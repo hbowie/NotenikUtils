@@ -24,8 +24,8 @@ public class Markedup: CustomStringConvertible {
     var lastCharWasEmphasis = false
     var emphasisPending = 0
     var lastEmphasisChar: Character = " "
-    var listInProgress: Character = " "
-    var defInProgress: Character = " "
+    public var listInProgress: Character = " "
+    public var defInProgress: Character = " "
     
     var spacesPerIndent = 2
     var currentIndent = 0
@@ -46,27 +46,27 @@ public class Markedup: CustomStringConvertible {
         return code
     }
     
-    func flushCode() {
+    public func flushCode() {
         code = ""
     }
     
-    func templateNextRec() {
+    public func templateNextRec() {
         writeLine("<?nextrec?>")
     }
     
-    func templateLoop() {
+    public func templateLoop() {
         writeLine("<?loop?>")
     }
     
-    func templateOutput(filename: String) {
+    public func templateOutput(filename: String) {
         writeLine("<?output \"\(filename)\" ?>")
     }
     
-    func templateIfField(fieldname: String) {
+    public func templateIfField(fieldname: String) {
         writeLine("<?if \"\(fieldname)\" ?>")
     }
     
-    func templateEndIf() {
+    public func templateEndIf() {
         writeLine("<?endif?>")
     }
     
@@ -75,7 +75,7 @@ public class Markedup: CustomStringConvertible {
     ///   - title: The page title, if one is available.
     ///   - css: The CSS to be used, or the filename containing the CSS.
     ///   - linkToFile: If true, then interpet the CSS string as a file name, rather than the actual CSS. 
-    func startDoc(withTitle title: String?, withCSS css: String?, linkToFile: Bool = false) {
+    public func startDoc(withTitle title: String?, withCSS css: String?, linkToFile: Bool = false) {
         currentIndent = 0
         switch format {
         case .htmlDoc:
@@ -121,7 +121,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func finishDoc() {
+    public func finishDoc() {
         switch format {
         case .htmlDoc:
             writeLine("</body>")
@@ -139,7 +139,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func startDiv(klass: String?) {
+    public func startDiv(klass: String?) {
         if format == .htmlFragment || format == .htmlDoc {
             ensureNewLine()
             append("<div")
@@ -151,7 +151,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func finishDiv() {
+    public func finishDiv() {
         if format == .htmlFragment || format == .htmlDoc {
             writeLine("</div>")
         }
@@ -277,7 +277,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func startDefinitionList(klass: String?) {
+    public func startDefinitionList(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("<dl")
@@ -297,7 +297,7 @@ public class Markedup: CustomStringConvertible {
         defInProgress = " "
     }
     
-    func startDefTerm() {
+    public func startDefTerm() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("<dt>")
@@ -309,7 +309,7 @@ public class Markedup: CustomStringConvertible {
         defInProgress = "t"
     }
     
-    func finishDefTerm() {
+    public func finishDefTerm() {
         switch format {
         case .htmlDoc, .netscapeBookmarks, .htmlFragment:
             append("</dt>")
@@ -321,7 +321,7 @@ public class Markedup: CustomStringConvertible {
         defInProgress = " "
     }
     
-    func startDefDef() {
+    public func startDefDef() {
         switch format {
         case .htmlDoc, .netscapeBookmarks, .htmlFragment:
             append("<dd>")
@@ -333,7 +333,7 @@ public class Markedup: CustomStringConvertible {
         defInProgress = "d"
     }
     
-    func finishDefDef() {
+    public func finishDefDef() {
         switch format {
         case .htmlDoc, .netscapeBookmarks, .htmlFragment:
             append("</dd>")
@@ -345,7 +345,7 @@ public class Markedup: CustomStringConvertible {
         defInProgress = " "
     }
     
-    func finishDefinitionList() {
+    public func finishDefinitionList() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             writeLine("</dl>")
@@ -386,7 +386,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func paragraph(text: String) {
+    public func paragraph(text: String) {
         startParagraph()
         write(text)
         finishParagraph()
@@ -404,7 +404,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func startParagraph(klass: String?) {
+    public func startParagraph(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             ensureNewLine()
@@ -494,7 +494,7 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 0
     }
     
-    func startItalics() {
+    public func startItalics() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("<i>")
@@ -506,7 +506,7 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 1
     }
     
-    func finishItalics() {
+    public func finishItalics() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("</i>")
@@ -518,7 +518,7 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 0
     }
     
-    func startCite() {
+    public func startCite() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("<cite>")
@@ -529,7 +529,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func finishCite() {
+    public func finishCite() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("</cite>")
@@ -540,7 +540,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func heading(level: Int, text: String) {
+    public func heading(level: Int, text: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             writeLine("<h\(level)>\(text)</h\(level)>")
@@ -642,7 +642,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func codeBlock(_ block: String) {
+    public func codeBlock(_ block: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             writeLine("<pre><code>")
@@ -663,20 +663,20 @@ public class Markedup: CustomStringConvertible {
     }
     
     /// Open up the starting outline tag.
-    func startOutlineOpen(_ text: String) {
+    public func startOutlineOpen(_ text: String) {
         append("<outline text=\"")
         appendXML(text)
         append("\"")
     }
     
-    func addOutlineAttribute(label: String, value: String) {
+    public func addOutlineAttribute(label: String, value: String) {
         append(" \(label)=\"")
         appendXML(value)
         append("\"")
     }
     
     /// Close out the starting outline tag.
-    func startOutlineClose(finishToo: Bool = true) {
+    public func startOutlineClose(finishToo: Bool = true) {
         if finishToo {
             append("/")
         }
@@ -685,7 +685,7 @@ public class Markedup: CustomStringConvertible {
     }
     
     /// Finish up an open OPML outline.
-    func finishOutline() {
+    public func finishOutline() {
         writeLine("</outline>")
     }
     
@@ -701,7 +701,7 @@ public class Markedup: CustomStringConvertible {
     ///   - klass: The class to be embedded in the starting span tag.
     ///   - prefix: A prefix to precede the span.
     ///   - suffix: A suffix to follow the span. 
-    func spanConditional(value: String, klass: String, prefix: String, suffix: String, tag: String = "span") {
+    public func spanConditional(value: String, klass: String, prefix: String, suffix: String, tag: String = "span") {
         if value.count > 0 && value.lowercased() != "unknown" {
             append(prefix)
             append("<\(tag) class=\'\(klass)\'>")
@@ -755,19 +755,19 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    func shortDash() {
+    public func shortDash() {
         writeEnDash()
     }
     
-    func longDash() {
+    public func longDash() {
         writeEmDash()
     }
     
-    func increaseIndent() {
+    public func increaseIndent() {
         currentIndent += spacesPerIndent
     }
     
-    func decreaseIndent() {
+    public func decreaseIndent() {
         currentIndent -= spacesPerIndent
         if currentIndent < 0 {
             currentIndent = 0
@@ -818,7 +818,7 @@ public class Markedup: CustomStringConvertible {
     ///   - text: The text to be parsed.
     ///   - startingLastCharWasWhiteSpace: An indicator of whether the last character
     ///                                    was some sort of white space.
-    func parse(text: String, startingLastCharWasWhiteSpace: Bool) {
+    public func parse(text: String, startingLastCharWasWhiteSpace: Bool) {
         startDoc(withTitle: nil, withCSS: nil)
         lastCharWasWhiteSpace = startingLastCharWasWhiteSpace
         whiteSpacePending = true
