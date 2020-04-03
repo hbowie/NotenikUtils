@@ -9,7 +9,7 @@
 import Foundation
 
 /// Something that can accept one line at a time
-protocol LineWriter  {
+public protocol LineWriter  {
     
     /// Get ready to write some lines
     func open()

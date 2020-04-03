@@ -11,7 +11,7 @@
 
 import Foundation
 
-protocol RowImporter {
+public protocol RowImporter {
     
     /// Initialize the class with a Row Consumer and an optional
     /// Script Workspace. 

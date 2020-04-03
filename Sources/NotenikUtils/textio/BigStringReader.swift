@@ -12,31 +12,31 @@
 import Foundation
 
 /// Breaks a string down into characters and lines
-class BigStringReader: LineReader {
+public class BigStringReader: LineReader {
     
     /// The string to be read.
-    var bigString:  String = ""
+    public var bigString:  String = ""
     
     /// An index pointing to the next position in the string to be read.
-    var currIndex:  String.Index
+    public var currIndex:  String.Index
     var nextIndex:  String.Index
     var lastIndex:  String.Index
     
     var currChar:   Character = " "
-    var endOfLine = false
-    var endOfFile = false
+    public var endOfLine = false
+    public var endOfFile = false
     
     var lastChar:   Character = " "
     
     var line       = ""
     var lineLength = 0
-    var lineStartIndex: String.Index
+    public var lineStartIndex: String.Index
     
     var lineCount : Int = 0
     var charCount : Int = 0
     
     /// Initialize with a blank initial value.
-    init() {
+    public init() {
         currIndex = bigString.startIndex
         nextIndex = bigString.startIndex
         lastIndex = bigString.startIndex
@@ -44,13 +44,13 @@ class BigStringReader: LineReader {
     }
     
     /// Initialize with a passed string. 
-    convenience init(_ bigString: String) {
+    public convenience init(_ bigString: String) {
         self.init()
         set(bigString)
     }
     
     /// Attempt to initialize directly from a file URL.
-    init?(fileURL: URL) {
+    public init?(fileURL: URL) {
         do {
             bigString = try String(contentsOf: fileURL, encoding: .utf8)
             currIndex = bigString.startIndex
@@ -75,7 +75,7 @@ class BigStringReader: LineReader {
     }
     
     /// Get ready to read some lines
-    func open() {
+    public func open() {
         initVars()
     }
     
@@ -93,7 +93,7 @@ class BigStringReader: LineReader {
     }
     
     /// Read the next line, returning nil at end of file
-    func readLine() -> String? {
+    public func readLine() -> String? {
         
         guard !endOfFile else { return nil }
         
@@ -122,7 +122,7 @@ class BigStringReader: LineReader {
     }
     
     /// Read the next character, setting a flag at the end of a line.
-    func nextChar() -> Character {
+    public func nextChar() -> Character {
         guard !endOfFile else { return " " }
         lastChar = currChar
         lastIndex = currIndex
@@ -147,14 +147,14 @@ class BigStringReader: LineReader {
     
     /// When using nextChar to retrieve characters, this method can be used to retrieve
     /// the line just completed, after hitting end of line with nextChar.
-    var lastLine: String {
+    public var lastLine: String {
         guard lineStartIndex < bigString.endIndex else { return "" }
         guard lineStartIndex < currIndex else { return "" }
         return String(bigString[lineStartIndex..<currIndex])
     }
     
     /// Return the remaining contents of the string, dropping any trailing spaces or newlines. 
-    var remaining: String {
+    public var remaining: String {
         var lastIndex = bigString.index(before: bigString.endIndex)
         while lastIndex > nextIndex &&
             (bigString[lastIndex].isWhitespace || bigString[lastIndex].isNewline) {
@@ -169,7 +169,7 @@ class BigStringReader: LineReader {
     }
     
     /// All done reading
-    func close() {
+    public func close() {
         currIndex = bigString.startIndex
         lastChar = " "
     }

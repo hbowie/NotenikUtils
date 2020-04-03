@@ -12,25 +12,25 @@
 import Foundation
 
 /// Read a Directory and return its contents as a series of rows. 
-class DirReader: RowImporter {
+public class DirReader: RowImporter {
     
     let fileManager         = FileManager.default
     
     var consumer:           RowConsumer?
     
-    var maxDirDepth         = 1
+    public var maxDirDepth         = 1
     
     var labels:             [String] = []
     var fields:             [String] = []
     
     var columnIndex         = 0
     
-    init() {
+    public init() {
         
     }
     
     /// Initialize the class with a Row Consumer
-    func setContext(consumer: RowConsumer) {
+    public func setContext(consumer: RowConsumer) {
         self.consumer = consumer
     }
     
@@ -39,7 +39,7 @@ class DirReader: RowImporter {
     ///
     /// - Parameter fileURL: The URL of the file to be read.
     /// - Returns: The number of rows returned.
-    func read(fileURL: URL) {
+    public func read(fileURL: URL) {
         labels.append("Sort Key")
         var folderNumber = 1
         while folderNumber < maxDirDepth {

@@ -12,7 +12,7 @@
 import Foundation
 
 /// Read a Markdown file with headings, and chunk it up into sections.   
-class MDHeadReader: RowImporter {
+public class MDHeadReader: RowImporter {
     
     var consumer:           RowConsumer!
     
@@ -27,7 +27,11 @@ class MDHeadReader: RowImporter {
     var level = ""
     var body  = ""
     
-    func setContext(consumer: RowConsumer) {
+    public init() {
+        
+    }
+    
+    public func setContext(consumer: RowConsumer) {
         self.consumer = consumer
     }
     
@@ -35,7 +39,7 @@ class MDHeadReader: RowImporter {
     /// to the consumer, one at a time.
     ///
     /// - Parameter fileURL: The URL of the file to be read.
-    func read(fileURL: URL) {
+    public func read(fileURL: URL) {
         do {
             let bigString = try String(contentsOf: fileURL, encoding: .utf8)
             let reader = BigStringReader(bigString)

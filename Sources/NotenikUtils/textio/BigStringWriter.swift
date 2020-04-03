@@ -3,42 +3,49 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 2/11/19.
-//  Copyright © 2019 PowerSurge Publishing. All rights reserved.
+//  Copyright © 2020 Herb Bowie (https://powersurgepub.com)
+//
+//  This programming code is published as open source software under the
+//  terms of the MIT License (https://opensource.org/licenses/MIT).
 //
 
 import Foundation
 
-class BigStringWriter: LineWriter, CustomStringConvertible {
+public class BigStringWriter: LineWriter, CustomStringConvertible {
     
-    var bigString: String = ""
+    public init() {
+        
+    }
     
-    var description: String {
+    public var bigString: String = ""
+    
+    public var description: String {
         return bigString
     }
     
     /// Get ready to write some lines
-    func open() {
+    public func open() {
         bigString = ""
     }
     
     /// Write the next line.
-    func writeLine(_ line: String) {
+    public func writeLine(_ line: String) {
         write(line)
         endLine()
     }
     
     /// Write some more text, without ending the line.
-    func write(_ str: String) {
+    public func write(_ str: String) {
         bigString.append(str)
     }
     
     /// End the line.
-    func endLine() {
+    public func endLine() {
         bigString.append("\n")
     }
     
     /// All done writing
-    func close() {
+    public func close() {
         
     }
 }

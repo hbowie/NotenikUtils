@@ -16,7 +16,7 @@ import Foundation
 ///
 /// The file must have UTF-8 encoding. 
 /// The first line of the file must contain column headings.
-class DelimitedReader: RowImporter {
+public class DelimitedReader: RowImporter {
     
     var consumer:           RowConsumer!
     
@@ -37,8 +37,12 @@ class DelimitedReader: RowImporter {
     var openQuote =         false
     var openQuoteChar:      Character = " "
     
+    public init() {
+        
+    }
+    
     /// Initialize the class with a Row Consumer.
-    func setContext(consumer: RowConsumer) {
+    public func setContext(consumer: RowConsumer) {
         self.consumer = consumer
     }
     
@@ -47,7 +51,7 @@ class DelimitedReader: RowImporter {
     /// to the consumer, one at a time.
     ///
     /// - Parameter fileURL: The URL of the file to be read.
-    func read(fileURL: URL) {
+    public func read(fileURL: URL) {
         do {
             bigString = try String(contentsOf: fileURL, encoding: .utf8)
             scanString()

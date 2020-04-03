@@ -12,7 +12,7 @@
 import Foundation
 
 /// A class to write a comma-separated values or tab-delimited file
-class DelimitedWriter {
+public class DelimitedWriter {
     
     var destination: URL
     var format = FieldDelimiter.tabDelimited
@@ -23,7 +23,7 @@ class DelimitedWriter {
     var bigString = BigStringWriter()
     
     /// Must give us a destination url and the desired separator character upon initialization.
-    init(destination: URL, format: FieldDelimiter) {
+    public init(destination: URL, format: FieldDelimiter) {
         self.format = format
         self.destination = destination
         switch format {
@@ -37,7 +37,7 @@ class DelimitedWriter {
     }
     
     /// Open the writer for output.
-    func open() {
+    public func open() {
         bigString = BigStringWriter()
         bigString.open()
         lineStarted = false
@@ -45,7 +45,7 @@ class DelimitedWriter {
     
     /// Write a single column's worth of data. The writer will enclose in quotation marks
     /// and encode embedded quotation marks as needed (with two quote chars representing one).
-    func write(value: String) {
+    public func write(value: String) {
         if lineStarted {
             bigString.write(sepStr)
         }
@@ -54,14 +54,14 @@ class DelimitedWriter {
     }
     
     /// End a line to be written to the text file.
-    func endLine() {
+    public func endLine() {
         bigString.endLine()
         lineStarted = false
     }
     
     /// Close the file and indicate any errors. Note that this is where all the
     /// disk i/o happens.
-    func close() -> Bool {
+    public func close() -> Bool {
         bigString.close()
         do {
             try bigString.bigString.write(to: destination, atomically: true, encoding: .utf8)
@@ -75,7 +75,7 @@ class DelimitedWriter {
         return true
     }
     
-    enum FieldDelimiter {
+    public enum FieldDelimiter {
         case commaSeparated
         case tabDelimited
     }

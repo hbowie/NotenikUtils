@@ -9,7 +9,7 @@
 import Foundation
 
 /// Something that can return one line at a time
-protocol LineReader  {
+public protocol LineReader  {
     
     /// Get ready to read some lines
     func open()
