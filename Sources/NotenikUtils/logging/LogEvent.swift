@@ -11,13 +11,13 @@
 
 import Foundation
 
-class LogEvent {
+public class LogEvent {
     var subsystem = "com.powersurgepub.notenik"
     var category = ""
     var level: LogLevel = .info
     var msg = ""
     
-    init (subsystem: String, category: String, level: LogLevel, message: String) {
+    public init (subsystem: String, category: String, level: LogLevel, message: String) {
         self.subsystem = subsystem
         self.category = category
         self.level = level

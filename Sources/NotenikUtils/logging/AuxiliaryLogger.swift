@@ -9,7 +9,7 @@
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
 //
 
-protocol AuxiliaryLogger {
+public protocol AuxiliaryLogger {
         /// Log a new event.
     func log (_ event: LogEvent)
     

@@ -12,20 +12,20 @@
 import Cocoa
 import os
 
-class Logger {
+public class Logger {
     
-    static let shared = Logger()
+    public static let shared = Logger()
     
     var dateFormatter: DateFormatter
     var dateFormat: String
     
-    var logDestPrint   = false
-    var logDestWindow  = false
-    var logDestUnified = true
+    public var logDestPrint   = false
+    public var logDestWindow  = false
+    public var logDestUnified = true
     
-    var logThreshold: LogLevel = .info
+    public var logThreshold: LogLevel = .info
     
-    var log = ""
+    public var log = ""
     
     var oslogs = [String:OSLog]()
     
@@ -37,18 +37,18 @@ class Logger {
         dateFormatter.dateFormat = dateFormat
     }
     
-    func addAuxiliaryLogger(aux: AuxiliaryLogger) -> Int {
+    public func addAuxiliaryLogger(aux: AuxiliaryLogger) -> Int {
         auxLogs.append(aux)
         return auxLogs.count - 1
     }
     
-    func removeAuxiliaryLogger(atIndex: Int) {
+    public func removeAuxiliaryLogger(atIndex: Int) {
         guard atIndex >= 0 && atIndex < auxLogs.count else { return }
         auxLogs.remove(at: atIndex)
     }
     
     /// Log a new event. 
-    func log (_ event: LogEvent) {
+    public func log (_ event: LogEvent) {
         log(subsystem: event.subsystem,
             category: event.category,
             level: event.level,
@@ -56,7 +56,7 @@ class Logger {
     }
     
     /// Process a loggable event
-    func log (subsystem: String, category: String, level: LogLevel, message: String) {
+    public func log (subsystem: String, category: String, level: LogLevel, message: String) {
         if level.rawValue >= logThreshold.rawValue {
             if logDestUnified {
                 if #available(OSX 10.12, *) {
