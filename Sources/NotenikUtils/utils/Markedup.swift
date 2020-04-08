@@ -689,6 +689,21 @@ public class Markedup: CustomStringConvertible {
         writeLine("</outline>")
     }
     
+    /// Write a comment line.
+    public func comment(_ text: String) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("<!-- \(text) -->")
+        case .markdown:
+            newLine()
+            writeLine("<!-- \(text) -->")
+            newLine()
+        case .opml:
+            writeLine("<!-- \(text) -->")
+        }
+        
+    }
+    
     /// Encode restricted characters as XML entities.
     func appendXML(_ text: String) {
         append(xmlConverter.convert(from: text))
