@@ -29,6 +29,7 @@ public class Markedup: CustomStringConvertible {
     
     var spacesPerIndent = 2
     var currentIndent = 0
+    var blockQuoting = false
     
     let xmlConverter = StringConverter()
     
@@ -164,6 +165,7 @@ public class Markedup: CustomStringConvertible {
         default:
             break
         }
+        blockQuoting = true
     }
     
     public func finishBlockQuote() {
@@ -173,6 +175,7 @@ public class Markedup: CustomStringConvertible {
         default:
             break
         }
+        blockQuoting = false
     }
     
     public func startOrderedList(klass: String?) {
@@ -789,8 +792,24 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func writeBlockOfLines(_ block: String) {
+        let reader = BigStringReader(block)
+        reader.open()
+        var line: String?
+        repeat {
+            line = reader.readLine()
+            if line != nil {
+                writeLine(line!)
+            }
+        } while line != nil
+        reader.close()
+    }
+    
     public func writeLine(_ text: String) {
         indent()
+        if blockQuoting && format == .markdown {
+            write("> ")
+        }
         write(text)
         newLine()
     }
