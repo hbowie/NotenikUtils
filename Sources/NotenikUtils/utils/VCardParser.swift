@@ -49,6 +49,12 @@ public class VCardParser {
                 switch c {
                 case ":", ";", "=":
                     endWord(with: c)
+                case ".":
+                    if firstWord.count == 0 && word == "item1" {
+                        word = ""
+                    } else {
+                        word.append(c)
+                    }
                 default:
                     word.append(c)
                 }

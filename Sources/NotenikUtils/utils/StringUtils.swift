@@ -504,7 +504,30 @@ public class StringUtils {
     
     /// Remove white spaces from front and back of string
     public static func trim(_ inStr: String) -> String {
-        return inStr.trimmingCharacters(in: .whitespaces)
+        return inStr.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    /// Remove white space and new line characters:
+    /// * Remove altogether from beginning and end of line;
+    /// * Replace with spaces within the line;
+    /// * Remove extra (two or more consecutive) spaces
+    public static func cleanAndTrim(_ inStr: String) -> String {
+        var outStr = ""
+        var pendingSpace = false
+        for c in inStr {
+            if c.isNewline || c.isWhitespace {
+                if outStr.count > 0 {
+                    pendingSpace = true
+                }
+            } else {
+                if pendingSpace {
+                    outStr.append(" ")
+                    pendingSpace = false
+                }
+                outStr.append(c)
+            }
+        }
+        return outStr
     }
     
     /// Remove white space and Markdown heading characters from front and back of string

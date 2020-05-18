@@ -19,6 +19,10 @@ public class BigStringWriter: LineWriter, CustomStringConvertible {
     
     public var bigString: String = ""
     
+    public var count: Int {
+        return bigString.count
+    }
+    
     public var description: String {
         return bigString
     }
