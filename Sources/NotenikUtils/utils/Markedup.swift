@@ -443,6 +443,7 @@ public class Markedup: CustomStringConvertible {
             newLine()
         case .markdown:
             newLine()
+            newLine()
         case .opml:
             break
         }
