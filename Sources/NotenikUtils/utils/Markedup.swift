@@ -544,10 +544,16 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func heading(level: Int, text: String) {
+    public func heading(level: Int, text: String, addID: Bool = false) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            writeLine("<h\(level)>\(text)</h\(level)>")
+            if addID {
+                startHeading(level: level, id: StringUtils.toCommonFileName(text))
+            } else {
+                startHeading(level: level)
+            }
+            write(text)
+            finishHeading(level: level)
         case .markdown:
             writeLine(String(repeating: "#", count: level) + " " + text)
         case .opml:
@@ -555,10 +561,14 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startHeading(level: Int) {
+    public func startHeading(level: Int, id: String = "") {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            write("<h\(level)>")
+            if id.count > 0 {
+                write("<h\(level) id=\"\(id)\">")
+            } else {
+                write("<h\(level)>")
+            }
         case .markdown:
             write(String(repeating: "#", count: level) + " ")
         case .opml:
