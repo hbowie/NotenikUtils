@@ -38,6 +38,15 @@ public class StringConverter {
         add(from: "...", to: "&hellip;")
     }
     
+    public func addXMLDecode() {
+        add(from: "&quot;",   to: "\"")
+        add(from: "&apos;",   to: "'")
+        add(from: "&amp;",    to: "&")
+        add(from: "&lt;",     to: "<")
+        add(from: "&gt;",     to: ">")
+        add(from: "&hellip;", to: "...")
+    }
+    
     /// Add conversions of various html entities back to normal straight single
     /// quotes, since email clients often seem to have trouble with the entities. 
     public func addEmailQuotes() {
