@@ -69,7 +69,7 @@ public class BigStringReader: LineReader {
     
     /// Set a new value for the string to be read, and position ourselves at the
     /// beginning of the string.
-    func set (_ bigString : String) {
+    func set (_ bigString: String) {
         self.bigString = bigString
         initVars()
     }
@@ -110,15 +110,14 @@ public class BigStringReader: LineReader {
             }
         }
         
-        if endOfFile {
-            return nil
-        } else if lineLength == 0 {
-            return ""
-        } else {
+        if lineLength > 0 {
             line = String(bigString[lineStartIndex...lastIndex])
             return line
+        } else if endOfFile {
+            return nil
+        } else {
+            return ""
         }
-        
     }
     
     /// Read the next character, setting a flag at the end of a line.
