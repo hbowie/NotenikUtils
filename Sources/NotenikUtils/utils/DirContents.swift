@@ -93,6 +93,7 @@ public class DirContents {
         while i < dirEntries.count {
             let entry = dirEntries[i]
             if entry.starts(with: ".") && skipDotFiles {
+                i += 1
                 continue
             }
             let lowerEntry = entry.lowercased()
