@@ -57,7 +57,7 @@ public class DelimitedReader: RowImporter {
             scanString()
         } catch {
             Logger.shared.log(subsystem: "com.powersurgepub.notenik",
-                              category: "MergeInput",
+                              category: "DelimitedReader",
                               level: .error,
                               message: "Error reading Delimited Text File from \(fileURL)")
         }
