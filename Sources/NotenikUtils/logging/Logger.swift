@@ -9,7 +9,7 @@
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
 //
 
-import Cocoa
+import Foundation
 import os
 
 public class Logger {
@@ -59,7 +59,7 @@ public class Logger {
     public func log (subsystem: String, category: String, level: LogLevel, message: String) {
         if level.rawValue >= logThreshold.rawValue {
             if logDestUnified {
-                if #available(OSX 10.12, *) {
+                if #available(OSX 10.12, iOS 10.0, *) {
                     logToUnified(subsystem: subsystem, category: category, level: level, message: message)
                 } else {
                     // Fallback on earlier versions
@@ -107,6 +107,7 @@ public class Logger {
         }
     }
     
+    @available(iOS 10.0, *)
     @available(OSX 10.12, *)
     func logToUnified (subsystem: String, category: String, level: LogLevel, message: String) {
         let logKey = subsystem + "/" + category
