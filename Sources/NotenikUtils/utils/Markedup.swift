@@ -676,6 +676,36 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func openTag(_ tag: String) {
+        append("<" + tag)
+    }
+    
+    public func addHref(_ value: String) {
+        addAttribute(label: "href", value: value)
+    }
+    
+    public func addID(_ value: String) {
+        addAttribute(label: "id", value: value)
+    }
+    
+    public func addTitle(_ value: String) {
+        addAttribute(label: "title", value: value)
+    }
+    
+    public func addClass(_ value: String) {
+        addAttribute(label: "class", value: value)
+    }
+    
+    public func addAttribute(label: String, value: String) {
+        append(" \(label)=\"")
+        appendXML(value)
+        append("\"")
+    }
+    
+    public func closeTag() {
+        append(">")
+    }
+    
     /// Open up the starting outline tag.
     public func startOutlineOpen(_ text: String) {
         append("<outline text=\"")
@@ -782,6 +812,10 @@ public class Markedup: CustomStringConvertible {
         case .opml:
             append("&apos;")
         }
+    }
+    
+    public func appendNumberedAttribute(number: Int) {
+        append("&#\(number);")
     }
     
     public func shortDash() {
