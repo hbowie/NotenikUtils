@@ -46,10 +46,12 @@ public class FileName: CustomStringConvertible {
     public var dotfile = false
     public var template = false
     public var noteExt = false
+    public var htmlExt = false
     public var infofile = false
     public var licenseFile = false
     var conflictedCopy = false
     public var collectionParms = false
+    public var indexFile = false
     
     public var description: String {
         return fileNameStr
@@ -175,15 +177,21 @@ public class FileName: CustomStringConvertible {
         if ext.count > 0 {
             fileOrDir = .file
         }
+        htmlExt = false
         switch extLower {
         case "txt", "text", "markdown", "md", "mdown", "mkdown", "mdtext", "notenik":
             noteExt = true
             infofile = false
+            indexFile = false
         case "nnk":
             noteExt = true
+            indexFile = false
+        case "htm", "html":
+            htmlExt = true
         default:
             noteExt = false
             infofile = false
+            indexFile = false
         }
     }
     
@@ -203,10 +211,13 @@ public class FileName: CustomStringConvertible {
         
         let readMeStr = "readme"
         let infoStr = "info"
+        let indexStr = "index"
         var j = 0
         var k = 0
+        var l = 0
         readme = true
         infofile = true
+        indexFile = true
         for c in baseLower {
             if StringUtils.isWhitespace(c) {
                 // Ignore spaces
@@ -223,9 +234,15 @@ public class FileName: CustomStringConvertible {
                 } else {
                     infofile = false
                 }
+                if l < indexStr.count && c == StringUtils.charAt(index: l, str: indexStr) {
+                    l += 1
+                } else {
+                    indexFile = false
+                }
             } else {
                 readme = false
                 infofile = false
+                indexFile = false
             }
         }
         if j < readMeStr.count {
@@ -233,6 +250,9 @@ public class FileName: CustomStringConvertible {
         }
         if k < infoStr.count {
             infofile = false
+        }
+        if l < indexStr.count {
+            indexFile = false
         }
         if !noteExt {
             readme = false

@@ -100,4 +100,23 @@ public class FileUtils {
         }
         return true
     }
+    
+    /// Attempt to make a new directory at the given location.
+    public static func makeDirectory(at dirURL: URL, withIntermediateDirectories: Bool = true) -> MkDirResults {
+        let dirPath = dirURL.path
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: dirPath, isDirectory: &isDir) {
+            if isDir.boolValue {
+                return .alreadyExists
+            } else {
+                return .failure
+            }
+        }
+        do {
+            try FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: withIntermediateDirectories)
+        } catch {
+            return .failure
+        }
+        return .created
+    }
 }
