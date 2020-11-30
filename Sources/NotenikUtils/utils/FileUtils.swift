@@ -23,6 +23,25 @@ public class FileUtils {
         return isDirectory.boolValue
     }
     
+    /// See if the specified folder is empty (ignoring hidded macOS trickery). . 
+    public static func isEmpty(_ path: String) -> Bool {
+        do {
+            let items = try FileManager.default.contentsOfDirectory(atPath: path)
+            if items.count == 0 {
+                return true
+            } else {
+                for item in items {
+                    if item != ".DS_Store" {
+                        return false
+                    }
+                }
+                return true
+            }
+        } catch {
+            return false
+        }
+    }
+    
     /// Join two path Strings, ensuring one and only one slash between the two.
     ///
     /// - Parameters:
@@ -118,5 +137,34 @@ public class FileUtils {
             return .failure
         }
         return .created
+    }
+    
+    /// Attempt to remove the file or folder at the given file path.
+    public static func removeItem(at filePath: String) -> Bool {
+        let url = URL(fileURLWithPath: filePath)
+        return removeItem(at: url)
+    }
+    
+    /// Attempt to remove the file or folder at the given URL.
+    public static func removeItem(at: URL?) -> Bool {
+        guard let urlToRemove = at else { return false }
+        var removed = false
+        do {
+            try FileManager.default.trashItem(at: urlToRemove, resultingItemURL: nil)
+            removed = true
+        } catch {
+            print("Error trashing item: \(error)")
+            removed = false
+        }
+        if !removed {
+            do {
+                try FileManager.default.removeItem(at: urlToRemove)
+                removed = true
+            } catch {
+                print ("Error deleting item: \(error)")
+                removed = false
+            }
+        }
+        return removed
     }
 }
