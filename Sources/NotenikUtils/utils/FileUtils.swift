@@ -19,7 +19,8 @@ public class FileUtils {
     /// - Returns: True if the path points to a folder; otherwise false. 
     public static func isDir (_ path: String) -> Bool {
         var isDirectory: ObjCBool = false
-        FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
+        let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
+        guard exists else { return false }
         return isDirectory.boolValue
     }
     
