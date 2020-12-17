@@ -585,34 +585,6 @@ public class StringUtils {
         return within.range(of: target) != nil
     }
     
-    /// Let's try to convert a string into a URL, replacing any spaces with encoded ('%20') strings.
-    public static func urlFrom(str: String) -> URL? {
-        var encoded = ""
-        var lookingForColon = true
-        var colonFound = false
-        for char in str {
-            if char.isWhitespace {
-                encoded.append("%20")
-                lookingForColon = false
-            } else {
-                encoded.append(char)
-                if lookingForColon {
-                    if char == ":" {
-                        colonFound = true
-                    } else if !char.isLetter {
-                        lookingForColon = false
-                    }
-                }
-            }
-        }
-        var possibleURL: URL? = nil
-        if colonFound {
-            possibleURL = URL(string: encoded)
-        } else {
-            possibleURL = URL(fileURLWithPath: str)
-        }
-        return possibleURL
-    }
 }
 
 /// See if the next few characters in the first string are equal to
@@ -624,7 +596,6 @@ public class StringUtils {
 ///   - str2: The second string.
 /// - Returns: True if equal, false otherwise.
 extension String {
-    
     
     /// Determines whether the passed string is equal to the
     /// equivalent portion of this string, as indexed by the
