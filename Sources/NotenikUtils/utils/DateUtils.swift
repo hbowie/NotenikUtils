@@ -83,6 +83,10 @@ public class DateUtils {
         timestampFormatter.dateFormat = "yyyyMMddkkmmss"
     }
     
+    public func refreshToday() {
+        now = Date()
+    }
+    
     /// Return today's date in yyyy-MM-dd format
     public var ymdToday: String {
         return ymdFormatter.string(from: now)
