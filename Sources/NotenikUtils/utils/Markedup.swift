@@ -556,6 +556,7 @@ public class Markedup: CustomStringConvertible {
             finishHeading(level: level)
         case .markdown:
             writeLine(String(repeating: "#", count: level) + " " + text)
+            newLine()
         case .opml:
             break
         }
