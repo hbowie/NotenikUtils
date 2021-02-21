@@ -151,8 +151,10 @@ public class FileUtils {
         guard let urlToRemove = at else { return false }
         var removed = false
         do {
-            try FileManager.default.trashItem(at: urlToRemove, resultingItemURL: nil)
-            removed = true
+            if #available(iOS 11.0, *) {
+                try FileManager.default.trashItem(at: urlToRemove, resultingItemURL: nil)
+                removed = true
+            }
         } catch {
             print("Error trashing item: \(error)")
             removed = false
