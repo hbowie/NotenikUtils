@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 1/25/19.
-//  Copyright © 2019 - 2020 Herb Bowie (https://powersurgepub.com)
+//  Copyright © 2019 - 2021 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -71,12 +71,19 @@ public class Markedup: CustomStringConvertible {
         writeLine("<?endif?>")
     }
     
+    public func templateAllFields() {
+        writeLine("<?allfields?>")
+    }
+    
     /// Start the document with appropriate markup.
     /// - Parameters:
     ///   - title: The page title, if one is available.
     ///   - css: The CSS to be used, or the filename containing the CSS.
     ///   - linkToFile: If true, then interpet the CSS string as a file name, rather than the actual CSS. 
-    public func startDoc(withTitle title: String?, withCSS css: String?, linkToFile: Bool = false) {
+    public func startDoc(withTitle title: String?,
+                         withCSS css: String?,
+                         linkToFile: Bool = false,
+                         withJS js: String? = nil) {
         currentIndent = 0
         switch format {
         case .htmlDoc:
@@ -96,6 +103,9 @@ public class Markedup: CustomStringConvertible {
                     writeLine(css!)
                     writeLine("</style>")
                 }
+            }
+            if js != nil && js!.count > 0 {
+                writeLine(js!)
             }
             writeLine("</head>")
             writeLine("<body>")
@@ -746,7 +756,35 @@ public class Markedup: CustomStringConvertible {
         case .opml:
             writeLine("<!-- \(text) -->")
         }
-        
+    }
+    
+    public func startMultiLineComment(_ text: String) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("<!-- \(text) ")
+        case .markdown:
+            newLine()
+            writeLine("<!-- \(text) ")
+        case .opml:
+            writeLine("<!-- \(text) ")
+        }
+    }
+    
+    public func finishMultiLineComment(_ text: String) {
+        var paddedText = text
+        if text.count > 0 {
+            paddedText = text + " "
+        }
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("\(paddedText)-->")
+        case .markdown:
+            newLine()
+            writeLine("\(paddedText)-->")
+            newLine()
+        case .opml:
+            writeLine("\(paddedText)-->")
+        }
     }
     
     /// Encode restricted characters as XML entities.
