@@ -69,7 +69,7 @@ public class DelimitedWriter {
             Logger.shared.log(subsystem: "com.powersurgepub.notenik",
                               category: "DelimitedWriter",
                               level: .error,
-                              message: "Problem writing delimited file to disk!")
+                              message: "Problem writing delimited file to disk at \(destination)")
             return false
         }
         return true
