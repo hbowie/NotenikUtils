@@ -246,6 +246,119 @@ public class Markedup: CustomStringConvertible {
         listInProgress = " "
     }
     
+    public func startListItem() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            ensureNewLine()
+            append("<li>")
+        case .markdown:
+            switch listInProgress {
+            case "u":
+                append("* ")
+            case "o":
+                append("1. ")
+            default:
+                break
+            }
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishListItem() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</li>")
+            newLine()
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func startDefinitionList(klass: String?) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("<dl")
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
+            newLine()
+        case .markdown:
+            if code.count > 0 {
+                newLine()
+            }
+        case .opml:
+            break
+        }
+        listInProgress = "d"
+        defInProgress = " "
+    }
+    
+    public func startDefTerm() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            ensureNewLine()
+            append("<dt>")
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+        defInProgress = "t"
+    }
+    
+    public func finishDefTerm() {
+        switch format {
+        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
+            append("</dt>")
+            newLine()
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+        defInProgress = " "
+    }
+    
+    public func startDefDef() {
+        switch format {
+        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
+            ensureNewLine()
+            append("<dd>")
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+        defInProgress = "d"
+    }
+    
+    public func finishDefDef() {
+        switch format {
+        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
+            append("</dd>")
+            newLine()
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+        defInProgress = " "
+    }
+    
+    public func finishDefinitionList() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("</dl>")
+        default:
+            break
+        }
+        listInProgress = " "
+    }
+    
     public func startPreformatted() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
@@ -283,115 +396,6 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             write("</code>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-    }
-    
-    public func startDefinitionList(klass: String?) {
-        switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("<dl")
-            if klass != nil && klass!.count > 0 {
-                append(" class=\"\(klass!)\"")
-            }
-            append(">")
-            newLine()
-        case .markdown:
-            if code.count > 0 {
-                newLine()
-            }
-        case .opml:
-            break
-        }
-        listInProgress = "d"
-        defInProgress = " "
-    }
-    
-    public func startDefTerm() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("<dt>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-        defInProgress = "t"
-    }
-    
-    public func finishDefTerm() {
-        switch format {
-        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
-            append("</dt>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-        defInProgress = " "
-    }
-    
-    public func startDefDef() {
-        switch format {
-        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
-            append("<dd>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-        defInProgress = "d"
-    }
-    
-    public func finishDefDef() {
-        switch format {
-        case .htmlDoc, .netscapeBookmarks, .htmlFragment:
-            append("</dd>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-        defInProgress = " "
-    }
-    
-    public func finishDefinitionList() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            writeLine("</dl>")
-        default:
-            break
-        }
-        listInProgress = " "
-    }
-    
-    public func startListItem() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            ensureNewLine()
-            append("<li>")
-        case .markdown:
-            switch listInProgress {
-            case "u":
-                append("* ")
-            case "o":
-                append("1. ")
-            default:
-                break
-            }
-        case .opml:
-            break
-        }
-    }
-    
-    public func finishListItem() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("</li>")
-            newLine()
         case .markdown:
             break
         case .opml:
