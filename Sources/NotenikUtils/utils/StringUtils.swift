@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2020 Herb Bowie (https://powersurgepub.com)
+//  Copyright © 2018 - 2021 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -435,7 +435,7 @@ public class StringUtils {
     /// If the passed character is at the end of its range, then the first
     /// character in the range will be returned. For example, incrementing '9'
     /// returns zero, incrementing 'z' returns 'a', incrementing 'Z' returns 'A'
-    public static func increment(_ toInc : Character) -> Character {
+    public static func increment(_ toInc: Character) -> Character {
         var found = false
         var nextChar : Character = toInc
         if isDigit(toInc) {

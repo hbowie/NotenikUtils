@@ -303,7 +303,8 @@ public class Markedup: CustomStringConvertible {
             ensureNewLine()
             append("<dt>")
         case .markdown:
-            break
+            ensureNewLine()
+            newLine()
         case .opml:
             break
         }
@@ -316,7 +317,7 @@ public class Markedup: CustomStringConvertible {
             append("</dt>")
             newLine()
         case .markdown:
-            break
+            newLine()
         case .opml:
             break
         }
@@ -329,7 +330,8 @@ public class Markedup: CustomStringConvertible {
             ensureNewLine()
             append("<dd>")
         case .markdown:
-            break
+            ensureNewLine()
+            append(": ")
         case .opml:
             break
         }
@@ -342,7 +344,7 @@ public class Markedup: CustomStringConvertible {
             append("</dd>")
             newLine()
         case .markdown:
-            break
+            newLine()
         case .opml:
             break
         }
@@ -585,6 +587,8 @@ public class Markedup: CustomStringConvertible {
                 write("<h\(level)>")
             }
         case .markdown:
+            ensureNewLine()
+            newLine()
             write(String(repeating: "#", count: level) + " ")
         case .opml:
             break
