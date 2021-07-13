@@ -150,6 +150,23 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func writeDoc(to url: URL) -> Bool {
+        do {
+            try code.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+            Logger.shared.log(subsystem: "com.powersurgepub.notenik",
+                              category: "Markedup",
+                              level: .info,
+                              message: "Document written to \(url.path)")
+        } catch {
+            Logger.shared.log(subsystem: "com.powersurgepub.notenik",
+                              category: "Markedup",
+                              level: .error,
+                              message: "Problems writing document to \(url.path)")
+            return false
+        }
+        return true
+    }
+    
     public func startDiv(klass: String?) {
         if format == .htmlFragment || format == .htmlDoc {
             ensureNewLine()
@@ -398,6 +415,31 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             write("</code>")
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func startDetails(summary: String) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("<details>")
+            if summary.count > 0 {
+                writeLine("<summary>\(summary)</summary>")
+            }
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishDetails() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("</details>")
         case .markdown:
             break
         case .opml:

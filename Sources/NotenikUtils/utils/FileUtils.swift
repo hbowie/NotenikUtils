@@ -81,11 +81,21 @@ public class FileUtils {
     /// Check to see if the given folder already exists.
     /// If it does not, then try to create it.
     ///
-    /// - Parameter dirPath: The path to the directory to be ensured.
+    /// - Parameter forDir: The path to the directory to be ensured.
     /// - Returns: True if folder now exists, false if it didn't already
     ///            exist and couldn't be created.
     public static func ensureFolder(forDir dirPath: String) -> Bool {
         let folderURL = URL(fileURLWithPath: dirPath)
+        return FileUtils.ensureFolder(forURL: folderURL)
+    }
+    
+    /// Check to see if the given folder already exists.
+    /// If it does not, then try to create it.
+    ///
+    /// - Parameter dirPath: The path to the directory to be ensured.
+    /// - Returns: True if folder now exists, false if it didn't already
+    ///            exist and couldn't be created.
+    public static func ensureFolder(forURL folderURL: URL) -> Bool {
         if FileManager.default.fileExists(atPath: folderURL.path) { return true }
         do {
             try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
