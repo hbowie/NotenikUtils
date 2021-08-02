@@ -602,11 +602,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func heading(level: Int, text: String, addID: Bool = false) {
+    public func heading(level: Int, text: String, addID: Bool = false, idText: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             if addID {
-                startHeading(level: level, id: StringUtils.toCommonFileName(text))
+                if idText == nil {
+                    startHeading(level: level, id: StringUtils.toCommonFileName(text))
+                } else {
+                    startHeading(level: level, id: StringUtils.toCommonFileName(idText!))
+                }
             } else {
                 startHeading(level: level)
             }
@@ -707,7 +711,7 @@ public class Markedup: CustomStringConvertible {
     public func horizontalRule() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("<hr>")
+            writeLine("<hr>")
         case .markdown:
             newLine()
             append("---")
