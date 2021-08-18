@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 12/24/18.
-//  Copyright © 2019 - 2020 Herb Bowie (https://powersurgepub.com)
+//  Copyright © 2019 - 2021 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -12,6 +12,51 @@
 import Foundation
 
 public class FileUtils {
+    
+    /// Conditionally save a string to disk, logging any errors encountered.
+    /// - Parameters:
+    ///   - strToWrite: The string to be written to disk.
+    ///   - outputURL: The disk location to which we are to write.
+    ///   - createDirectories: Create any enclosing folders needed (or not). 
+    ///   - checkForChanges: If true, try to read the existing file first, and then write only if the contents have changed.
+    public static func saveToDisk(strToWrite: String,
+                                  outputURL: URL,
+                                  createDirectories: Bool = false,
+                                  checkForChanges: Bool = false) -> Bool {
+        
+        var written = false
+        
+        var bypassWrite = false
+        
+        if checkForChanges {
+            do {
+                let existing = try String(contentsOf: outputURL, encoding: .utf8)
+                if existing == strToWrite {
+                    bypassWrite = true
+                }
+            } catch {
+                // Don't worry about it.
+            }
+        }
+        
+        if !bypassWrite {
+            do {
+                if createDirectories {
+                    let outputFolder = outputURL.deletingLastPathComponent()
+                    _ = FileUtils.ensureFolder(forURL: outputFolder)
+                }
+                try strToWrite.write(to: outputURL, atomically: true, encoding: .utf8)
+                written = true
+            } catch let error {
+                Logger.shared.log(subsystem: "com.powersurgepub.notenik",
+                                  category: "FileUtils",
+                                  level: .error,
+                                  message: "Could not write file at \(outputURL.path) due to \(error)")
+            }
+        }
+        
+        return written
+    }
     
     /// See if a path points to a directory / folder.
     ///
