@@ -598,6 +598,38 @@ public class StringUtils {
         return wikified
     }
     
+    public static func highlightPhraseInHTML(phrase: String, html: String, style: String? = nil, klass: String? = nil) -> String {
+        guard !phrase.isEmpty else { return html }
+        var spanAttrs = ""
+        if klass != nil && klass!.count > 0 {
+            spanAttrs = "class=\"\(klass!)\""
+        }
+        if style != nil && style!.count > 0 {
+            if spanAttrs.count > 0 {
+                spanAttrs.append(", ")
+            }
+            spanAttrs.append("style=\"\(style!)\"")
+        }
+        let startSpan = "<span \(spanAttrs)>"
+        let endSpan = "</span>"
+        let inc = startSpan.count + endSpan.count
+        var done = false
+        var mod = html
+        var remaining = mod.startIndex..<mod.endIndex
+        while !done {
+            if let range = mod.range(of: phrase, options: .caseInsensitive, range: remaining) {
+                let original = mod[range]
+                let replacement = startSpan + original + endSpan
+                mod.replaceSubrange(range, with: replacement)
+                let startRemaining = mod.index(range.upperBound, offsetBy: inc)
+                remaining = startRemaining..<mod.endIndex
+            } else {
+                done = true
+            }
+        }
+        return mod
+    }
+    
 }
 
 /// See if the next few characters in the first string are equal to
