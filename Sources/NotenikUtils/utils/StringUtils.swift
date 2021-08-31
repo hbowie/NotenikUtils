@@ -598,8 +598,15 @@ public class StringUtils {
         return wikified
     }
     
-    public static func highlightPhraseInHTML(phrase: String, html: String, style: String? = nil, klass: String? = nil) -> String {
+    /// Search for the given phrase in the given HTML and surround occurrences of the search phrase
+    /// with span tags calling out the specified HTML class and/or style.
+    public static func highlightPhraseInHTML(phrase: String,
+                                             html: String,
+                                             style: String? = nil,
+                                             klass: String? = nil) -> String {
+        
         guard !phrase.isEmpty else { return html }
+        
         var spanAttrs = ""
         if klass != nil && klass!.count > 0 {
             spanAttrs = "class=\"\(klass!)\""
@@ -613,15 +620,32 @@ public class StringUtils {
         let startSpan = "<span \(spanAttrs)>"
         let endSpan = "</span>"
         let inc = startSpan.count + endSpan.count
+        
         var done = false
         var mod = html
         var remaining = mod.startIndex..<mod.endIndex
+        if let bodyTagRange = mod.range(of: "<body>", options: .caseInsensitive) {
+            remaining = bodyTagRange.upperBound..<mod.endIndex
+        }
         while !done {
             if let range = mod.range(of: phrase, options: .caseInsensitive, range: remaining) {
-                let original = mod[range]
-                let replacement = startSpan + original + endSpan
-                mod.replaceSubrange(range, with: replacement)
-                let startRemaining = mod.index(range.upperBound, offsetBy: inc)
+                var charIndex = range.lowerBound
+                var tagChar: Character = " "
+                while charIndex >= mod.startIndex && tagChar == " " {
+                    let char = mod[charIndex]
+                    if char == ">" || char == "<" {
+                        tagChar = char
+                    }
+                    charIndex = mod.index(before: charIndex)
+                }
+                var bump = 0
+                if tagChar != "<" {
+                    let original = mod[range]
+                    let replacement = startSpan + original + endSpan
+                    mod.replaceSubrange(range, with: replacement)
+                    bump = inc
+                }
+                let startRemaining = mod.index(range.upperBound, offsetBy: bump)
                 remaining = startRemaining..<mod.endIndex
             } else {
                 done = true
