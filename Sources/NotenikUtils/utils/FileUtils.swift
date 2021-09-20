@@ -136,6 +136,30 @@ public class FileUtils {
     
     /// Check to see if the given folder already exists.
     /// If it does not, then try to create it.
+    /// - Parameters:
+    ///   - parentURL: The URL of a parent folder.
+    ///   - folder: A string containing a path component to be added to the parent.
+    /// - Returns: The URL of the target folder, if it now exists; if it did not already exist,
+    ///            and it could not be created, then return nil. 
+    public static func ensureFolder(parentURL: URL, folder: String) -> URL? {
+        let folderURL = parentURL.appendingPathComponent(folder)
+        if FileManager.default.fileExists(atPath: folderURL.path) {
+            return folderURL
+        }
+        do {
+            try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            Logger.shared.log(subsystem: "com.powersurgepub.notenik",
+                              category: "FileUtils",
+                              level: .error,
+                              message: "Could not create a new directory at \(folderURL.path)")
+            return nil
+        }
+        return folderURL
+    }
+    
+    /// Check to see if the given folder already exists.
+    /// If it does not, then try to create it.
     ///
     /// - Parameter dirPath: The path to the directory to be ensured.
     /// - Returns: True if folder now exists, false if it didn't already
