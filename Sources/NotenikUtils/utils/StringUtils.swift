@@ -654,6 +654,47 @@ public class StringUtils {
         return mod
     }
     
+    public static func display(_ value: String,
+                                label: String? = nil,
+                                blankBefore: Bool = false,
+                                header: String? = nil,
+                                sepLine: Bool = false,
+                                indentLevels: Int = 0) {
+        
+        if blankBefore {
+            print(" ")
+        }
+        var indent = String(repeating: "  ", count: indentLevels)
+        if header != nil && !header!.isEmpty && sepLine {
+            print(indent + header!)
+            indent.append("  ")
+        }
+        
+        var bullet = ""
+        switch indentLevels {
+        case 0:
+            bullet = ""
+        case 1:
+            bullet = "* "
+        case 2:
+            bullet = "- "
+        case 3:
+            bullet = "+ "
+        default:
+            bullet = "+ "
+        }
+        
+        var line = indent + bullet
+        if header != nil && !header!.isEmpty && !sepLine {
+            line.append(header! + " | ")
+        }
+        if label != nil && !label!.isEmpty {
+            line.append(label! + ": ")
+        }
+        line.append(value)
+        print(line)
+    }
+    
 }
 
 /// See if the next few characters in the first string are equal to
