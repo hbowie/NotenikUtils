@@ -693,16 +693,57 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func image(text: String, path: String, title: String? = nil) {
+    public func image(path: String,
+                      alt: String,
+                      title: String,
+                      captionPrefix: String,
+                      captionText: String,
+                      captionLink: String) {
+        
+        var caption = ""
+        caption.append(captionPrefix)
+        if !captionLink.isEmpty {
+            caption.append("<a href=\"" + captionLink + "\">")
+        }
+        caption.append(captionText)
+        if !captionLink.isEmpty {
+            caption.append("</a>")
+        }
+        
+        image(path: path, alt: alt, title: title, caption: caption)
+    }
+    
+    public func image(path: String,
+                      alt: String,
+                      title: String,
+                      caption: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("<img src=\"\(path)\" alt=\"\(text)\"")
+            append("<figure> ")
+            append("<img src=\"\(path)\" alt=\"\(alt)\"")
+            if !title.isEmpty {
+                append(" title=\"\(title)\"")
+            }
+            append(">")
+            append("<figcaption>\(caption)</figcaption>")
+            append("</figure>")
+        case .markdown:
+            append("![" + alt + "](" + path + " \"" + title + "\")")
+        case .opml:
+            break
+        }
+    }
+    
+    public func image(alt: String, path: String, title: String? = nil) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("<img src=\"\(path)\" alt=\"\(alt)\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
             }
             append(">")
         case .markdown:
-            append("![" + text + "](" + path + ")")
+            append("![" + alt + "](" + path + ")")
         case .opml:
             break
         }
