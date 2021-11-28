@@ -588,7 +588,16 @@ public class StringUtils {
     /// Take the passed string and turn it into a Wikipedia link.
     public static func wikify(_ str: String) -> String {
         var wikified = "https://en.wikipedia.org/wiki/"
-        for char in str {
+        var workStr = str
+        if str.contains(", ") {
+            let lastAndFirst = str.components(separatedBy: ", ")
+            if lastAndFirst.count == 2 {
+                workStr = lastAndFirst[1]
+                workStr.append(" ")
+                workStr.append(lastAndFirst[0])
+            }
+        }
+        for char in workStr {
             if char == " " {
                 wikified.append("_")
             } else {
