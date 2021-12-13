@@ -75,6 +75,13 @@ public class Markedup: CustomStringConvertible {
         writeLine("<?allfields?>")
     }
     
+    // Make sure we're not generating HTML doc stuff. 
+    public func noDoc() {
+        if format == .htmlDoc {
+            format = .htmlFragment
+        }
+    }
+    
     /// Start the document with appropriate markup.
     /// - Parameters:
     ///   - title: The page title, if one is available.
