@@ -17,6 +17,7 @@ public class HTMLtoMarkdown {
     var html = ""
     
     var currIndex:  String.Index
+    var nextIndex:  String.Index
     
     var currChar: Character = " "
     
@@ -28,8 +29,9 @@ public class HTMLtoMarkdown {
     
     public init(html: String) {
         self.html = html
-        nextChunk = HTMLChunk(type: .text, start: html.startIndex, end: html.endIndex)
+        nextChunk = HTMLChunk(type: .text, start: html.startIndex, end: html.startIndex)
         currIndex = self.html.startIndex
+        nextIndex = self.html.index(after: currIndex)
     }
     
     public func toMarkdown() -> String {
@@ -38,11 +40,11 @@ public class HTMLtoMarkdown {
     }
     
     func breakIntoChunks() {
-        nextChunk = HTMLChunk(type: .text, start: html.startIndex, end: html.endIndex)
+        nextChunk = HTMLChunk(type: .text, start: html.startIndex, end: html.startIndex)
         currIndex = html.startIndex
         while currIndex < html.endIndex {
             currChar = html[currIndex]
-            let nextIndex = markdown.index(after: currIndex)
+            nextIndex = markdown.index(after: currIndex)
             var nextChar: Character = " "
             if nextIndex < html.endIndex {
                 nextChar = html[nextIndex]
@@ -94,28 +96,28 @@ public class HTMLtoMarkdown {
     
     func endChunk() {
         
-        if nextChunk.end > startIndex {
-            if chunkType == .tag && currChar != ">" {
-                chunkType = .text
-            } else if chunkType == .entity && currChar != ";" {
-                chunkType = .text
+        if nextChunk.end > nextChunk.start {
+            if nextChunk.type == .tag && currChar != ">" {
+                nextChunk.type = .text
+            } else if nextChunk.type == .entity && currChar != ";" {
+                nextChunk.type = .text
             }
-            let chunk = HTMLChunk(type: chunkType, start: startIndex, end: endIndex)
-            chunks.append(chunk)
+            chunks.append(nextChunk)
         }
         
-        startIndex = currIndex
-        endIndex = currIndex
         switch currChar {
         case "<":
-            chunkType = .tag
+            nextChunk = HTMLChunk(type: .tag, start: currIndex, end: currIndex)
         case "&":
-            chunkType = .entity
+            nextChunk = HTMLChunk(type: .entity, start: currIndex, end: currIndex)
+        case ">":
+            nextChunk = HTMLChunk(type: .text, start: nextIndex, end: nextIndex)
+        case ";":
+            nextChunk = HTMLChunk(type: .text, start: nextIndex, end: nextIndex)
         default:
-            chunkType = .text
+            nextChunk = HTMLChunk(type: .text, start: currIndex, end: currIndex)
         }
-        element = ""
-        elementComplete = false
+        
     }
     
     class HTMLChunk {
