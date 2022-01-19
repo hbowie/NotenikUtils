@@ -726,17 +726,55 @@ public class Markedup: CustomStringConvertible {
                       caption: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            append("<figure> ")
+            startFigure()
             append("<img src=\"\(path)\" alt=\"\(alt)\"")
             if !title.isEmpty {
                 append(" title=\"\(title)\"")
             }
             append(">")
-            append("<figcaption>\(caption)</figcaption>")
-            append("</figure>")
+            startFigureCaption()
+            append(caption)
+            finishFigureCaption()
+            finishFigure()
         case .markdown:
             append("![" + alt + "](" + path + " \"" + title + "\")")
         case .opml:
+            break
+        }
+    }
+    
+    public func startFigure() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("<figure>")
+        default:
+            break
+        }
+    }
+    
+    public func finishFigure() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            writeLine("</figure>")
+        default:
+            break
+        }
+    }
+    
+    public func startFigureCaption() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("<figcaption>")
+        default:
+            break
+        }
+    }
+    
+    public func finishFigureCaption() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</figcaption>")
+        default:
             break
         }
     }
