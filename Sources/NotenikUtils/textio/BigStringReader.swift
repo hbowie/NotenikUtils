@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 12/9/18.
-//  Copyright © 2018 - 2020 Herb Bowie (https://powersurgepub.com)
+//  Copyright © 2018 - 2022 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -147,9 +147,15 @@ public class BigStringReader: LineReader {
     /// When using nextChar to retrieve characters, this method can be used to retrieve
     /// the line just completed, after hitting end of line with nextChar.
     public var lastLine: String {
+        var lastLn = ""
         guard lineStartIndex < bigString.endIndex else { return "" }
         guard lineStartIndex < currIndex else { return "" }
-        return String(bigString[lineStartIndex..<currIndex])
+        if endOfFile {
+            lastLn = String(bigString[lineStartIndex..<bigString.endIndex])
+        } else {
+            lastLn = String(bigString[lineStartIndex..<currIndex])
+        }
+        return lastLn
     }
     
     /// Return the remaining contents of the string, dropping any trailing spaces or newlines. 
