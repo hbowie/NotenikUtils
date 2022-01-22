@@ -147,15 +147,13 @@ public class BigStringReader: LineReader {
     /// When using nextChar to retrieve characters, this method can be used to retrieve
     /// the line just completed, after hitting end of line with nextChar.
     public var lastLine: String {
-        var lastLn = ""
         guard lineStartIndex < bigString.endIndex else { return "" }
-        guard lineStartIndex < currIndex else { return "" }
+        var lineEndIndex = currIndex
         if endOfFile {
-            lastLn = String(bigString[lineStartIndex..<bigString.endIndex])
-        } else {
-            lastLn = String(bigString[lineStartIndex..<currIndex])
+            lineEndIndex = bigString.endIndex
         }
-        return lastLn
+        guard lineStartIndex < lineEndIndex else { return "" }
+        return String(bigString[lineStartIndex..<lineEndIndex])
     }
     
     /// Return the remaining contents of the string, dropping any trailing spaces or newlines. 
