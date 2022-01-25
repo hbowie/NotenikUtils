@@ -514,6 +514,128 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func startTable() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("<table>")
+            newLine()
+        case .markdown:
+            newLine()
+            newLine()
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishTable() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</table>")
+            newLine()
+        case .markdown:
+            newLine()
+            newLine()
+        case .opml:
+            break
+        }
+    }
+    
+    public func startTableRow() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("<tr>")
+            newLine()
+        case .markdown:
+            newLine()
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishTableRow() {
+        finishTableCellIfOpen()
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</tr>")
+            newLine()
+        case .markdown:
+            newLine()
+        case .opml:
+            break
+        }
+    }
+    
+    var openTableCellTag = ""
+    
+    public func finishTableCellIfOpen() {
+        if openTableCellTag == "th" {
+            finishTableHeader()
+        } else if openTableCellTag == "td" {
+            finishTableData()
+        }
+        openTableCellTag = ""
+    }
+    
+    public func startTableHeader(style: String? = nil) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            if style == nil || style!.isEmpty {
+                append("<th>")
+            } else {
+                append("<th style=\"\(style!)\">")
+            }
+            newLine()
+        case .markdown:
+            append("|")
+        case .opml:
+            break
+        }
+        openTableCellTag = "th"
+    }
+    
+    public func finishTableHeader() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</th>")
+            newLine()
+        case .markdown:
+            append(" ")
+        case .opml:
+            break
+        }
+        openTableCellTag = ""
+    }
+    
+    public func startTableData(style: String? = nil) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            if style == nil || style!.isEmpty {
+                append("<td>")
+            } else {
+                append("<td style=\"\(style!)\">")
+            }
+            newLine()
+        case .markdown:
+            append("|")
+        case .opml:
+            break
+        }
+        openTableCellTag = "td"
+    }
+    
+    public func finishTableData() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+            append("</td>")
+            newLine()
+        case .markdown:
+            append(" ")
+        case .opml:
+            break
+        }
+        openTableCellTag = ""
+    }
+    
     public func startStrong() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
