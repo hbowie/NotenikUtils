@@ -731,6 +731,103 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func displayLine(opt: LineDisplayOption,
+                            text: String,
+                            depth: Int = 1,
+                            addID: Bool = false,
+                            idText: String? = nil) {
+        
+        var adjDepth = depth
+        if adjDepth < 1 {
+            adjDepth = 1
+        } else if adjDepth > 6 {
+            adjDepth = 6
+        }
+        
+        var headingLevel = 0
+        var bold = false
+        var italic = false
+        
+        switch opt {
+        case .p:
+            break
+        case .pBold:
+            bold = true
+        case .pItalics:
+            italic = true
+        case .pBoldItalic:
+            bold = true
+            italic = true
+        case .h1:
+            headingLevel = 1
+        case .h2:
+            headingLevel = 2
+        case .h3:
+            headingLevel = 3
+        case .h4:
+            headingLevel = 4
+        case .h5:
+            headingLevel = 5
+        case .h6:
+            headingLevel = 6
+        case .l0:
+            headingLevel = adjDepth
+        case .l1:
+            headingLevel = adjDepth + 1
+        case .l2:
+            headingLevel = adjDepth + 2
+        case .l3:
+            headingLevel = adjDepth + 3
+        }
+        
+        if headingLevel < 0 {
+            headingLevel = 0
+        } else if headingLevel > 6 {
+            headingLevel = 6
+        }
+        
+        var htmlID = ""
+        if addID {
+            if idText == nil {
+                htmlID = StringUtils.toCommonFileName(text)
+            } else {
+                htmlID = StringUtils.toCommonFileName(idText!)
+            }
+        }
+        
+        switch format {
+        case .htmlFragment, .htmlDoc, .markdown, .netscapeBookmarks:
+            if headingLevel == 0 {
+                startParagraph()
+                if bold {
+                    startStrong()
+                }
+                if italic {
+                    startEmphasis()
+                }
+            } else {
+                startHeading(level: headingLevel, id: htmlID)
+            }
+            write(text)
+            if headingLevel == 0 {
+                if bold {
+                    finishStrong()
+                }
+                if italic {
+                    finishItalics()
+                }
+                finishParagraph()
+            } else {
+                finishHeading(level: headingLevel)
+            }
+            if format == .markdown {
+                newLine()
+            }
+        case .opml:
+            break
+        }
+    }
+    
     public func heading(level: Int, text: String, addID: Bool = false, idText: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
