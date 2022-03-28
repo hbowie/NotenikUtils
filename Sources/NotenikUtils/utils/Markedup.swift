@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 1/25/19.
-//  Copyright © 2019 - 2021 Herb Bowie (https://hbowie.net)
+//  Copyright © 2019 - 2022 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -1461,7 +1461,7 @@ public class Markedup: CustomStringConvertible {
         lastCharWasEmDash = false
     }
     
-    func writeApostrophe() {
+    public func writeApostrophe() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
             append("&apos;")
@@ -1483,6 +1483,19 @@ public class Markedup: CustomStringConvertible {
                 startingQuote = true
             }
         case .markdown:
+            append("'")
+        case .opml:
+            append("&apos;")
+        }
+        lastCharWasWhiteSpace = false
+        lastCharWasEmDash = false
+    }
+    
+    public func writeEndingSingleQuote() {
+        switch format {
+        case .htmlFragment, .htmlDoc:
+            append("&#8217;")
+        case .markdown, .netscapeBookmarks:
             append("'")
         case .opml:
             append("&apos;")
