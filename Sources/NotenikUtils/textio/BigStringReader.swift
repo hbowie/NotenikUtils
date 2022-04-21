@@ -90,6 +90,22 @@ public class BigStringReader: LineReader {
         charCount = 0
         endOfLine = false
         endOfFile = false
+        checkForInvisibleStart()
+    }
+    
+    /// Some UTF-8 files start with a BOM (byte order mark) character. This seems
+    /// to be a bit of an anachronism, but may occasionally be encountered. This method
+    /// works around such a character, when found. 
+    func checkForInvisibleStart() {
+        guard nextIndex < bigString.endIndex else { return }
+        let firstChar = bigString[nextIndex]
+        if firstChar.isASCII { return }
+        if firstChar.isWhitespace { return }
+        if firstChar.isLetter { return }
+        if firstChar.isNumber { return }
+        if firstChar.isSymbol { return }
+        if firstChar.isPunctuation { return }
+        nextIndex = bigString.index(after: nextIndex)
     }
     
     /// Read the next line, returning nil at end of file
