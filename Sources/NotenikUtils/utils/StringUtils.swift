@@ -704,6 +704,33 @@ public class StringUtils {
         print(line)
     }
     
+    /// Remove leading and trailing paragraph tags.
+    public static func removeParagraphTags(_ html: String) -> String {
+        guard html.count > 0 else { return html }
+        var start = html.startIndex
+        var end = html.endIndex
+        if html.hasPrefix("<p>") || html.hasPrefix("<P>") {
+            start = html.index(html.startIndex, offsetBy: 3)
+        }
+        var j = html.index(before: html.endIndex)
+        while (j > start &&
+            (StringUtils.charAt(index: j, str: html).isWhitespace ||
+                StringUtils.charAt(index: j, str: html).isNewline)) {
+                    j = html.index(before: j)
+        }
+        let i = html.index(j, offsetBy: -3)
+        if i >= start {
+            let possibleEndPara = html[i...j]
+            if possibleEndPara == "</p>" || possibleEndPara == "</P>" {
+                end = i
+            }
+        }
+        if html.hasSuffix("</p>") || html.hasSuffix("</P>") {
+            end = html.index(html.endIndex, offsetBy: -4)
+        }
+        return String(html[start..<end])
+    }
+    
 }
 
 /// See if the next few characters in the first string are equal to
