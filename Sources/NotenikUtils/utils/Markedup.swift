@@ -32,9 +32,11 @@ public class Markedup: CustomStringConvertible {
     var blockQuoting = false
     
     let xmlConverter = StringConverter()
+    let codeConverter = StringConverter()
     
     public init() {
         xmlConverter.addXML()
+        codeConverter.addHTML()
     }
     
     public convenience init (format: MarkedupFormat) {
@@ -1056,7 +1058,7 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             writeLine("<pre><code>")
-            writeLine(block)
+            writeLine(codeConverter.convert(from: block))
             writeLine("</code></pre>")
         case .markdown:
             let reader: LineReader = BigStringReader(block)
