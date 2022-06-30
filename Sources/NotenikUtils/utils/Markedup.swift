@@ -14,8 +14,19 @@ import Foundation
 /// An object capable of generating marked up text (currently HTML or Markdown)
 public class Markedup: CustomStringConvertible {
     
+    // -----------------------------------------------------------
+    //
+    // MARK: Constants, Variables, Initialization
+    // and simple utilities.
+    //
+    // -----------------------------------------------------------
+    
     var format: MarkedupFormat = .htmlFragment
+    
+    var htmlFormatting = HTMLFormatting()
+    
     public var code = ""
+    var lastCodeAdded = ""
     
     var lastCharWasWhiteSpace = true
     var lastCharWasEmDash = false
@@ -27,7 +38,6 @@ public class Markedup: CustomStringConvertible {
     public var listInProgress: Character = " "
     public var defInProgress: Character = " "
     
-    var spacesPerIndent = 2
     var currentIndent = 0
     var blockQuoting = false
     
@@ -53,6 +63,12 @@ public class Markedup: CustomStringConvertible {
         code = ""
     }
     
+    // -----------------------------------------------------------
+    //
+    // MARK: Generate Notenik Template commands.
+    //
+    // -----------------------------------------------------------
+    
     public func templateNextRec() {
         writeLine("<?nextrec?>")
     }
@@ -76,6 +92,12 @@ public class Markedup: CustomStringConvertible {
     public func templateAllFields() {
         writeLine("<?allfields?>")
     }
+    
+    // -----------------------------------------------------------
+    //
+    // MARK: Start and complete a document, if requested.
+    //
+    // -----------------------------------------------------------
     
     // Make sure we're not generating HTML doc stuff. 
     public func noDoc() {
@@ -183,6 +205,12 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    // -----------------------------------------------------------
+    //
+    // MARK: Output the completed code.
+    //
+    // -----------------------------------------------------------
+    
     public func writeDoc(to url: URL) -> Bool {
         do {
             try code.write(to: url, atomically: true, encoding: String.Encoding.utf8)
@@ -200,9 +228,15 @@ public class Markedup: CustomStringConvertible {
         return true
     }
     
+    // -----------------------------------------------------------
+    //
+    // MARK: Block Level Tags.
+    //
+    // -----------------------------------------------------------
+    
     public func startDiv(klass: String?) {
         if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
-            ensureNewLine()
+            spaceBeforeBlock()
             append("<div")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -215,12 +249,14 @@ public class Markedup: CustomStringConvertible {
     public func finishDiv() {
         if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
             writeLine("</div>")
+            spaceAfterBlock()
         }
     }
     
     public func startBlockQuote() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             writeLine("<blockquote>")
         default:
             break
@@ -231,7 +267,11 @@ public class Markedup: CustomStringConvertible {
     public func finishBlockQuote() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            if htmlFormatting.blockSep == .newline || htmlFormatting.blockSep == .newlineX2 {
+                ensureNewLine()
+            }
             writeLine("</blockquote>")
+            spaceAfterBlock()
         default:
             break
         }
@@ -241,6 +281,7 @@ public class Markedup: CustomStringConvertible {
     public func startOrderedList(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             append("<ol")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -260,7 +301,10 @@ public class Markedup: CustomStringConvertible {
     public func finishOrderedList() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            withinListItem = false
+            blocksWithinListItem = 0
             writeLine("</ol>")
+            spaceAfterBlock()
         default:
             break
         }
@@ -270,6 +314,7 @@ public class Markedup: CustomStringConvertible {
     public func startUnorderedList(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             append("<ul")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -289,7 +334,10 @@ public class Markedup: CustomStringConvertible {
     public func finishUnorderedList() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            withinListItem = false
+            blocksWithinListItem = 0
             writeLine("</ul>")
+            spaceAfterBlock()
         default:
             break
         }
@@ -301,6 +349,8 @@ public class Markedup: CustomStringConvertible {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             ensureNewLine()
             append("<li>")
+            withinListItem = true
+            blocksWithinListItem = 0
         case .markdown:
             switch listInProgress {
             case "u":
@@ -319,6 +369,8 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("</li>")
+            withinListItem = false
+            blocksWithinListItem = 0
             newLine()
         case .markdown:
             break
@@ -328,8 +380,11 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func startDefinitionList(klass: String?) {
+        termsWithinList = 0
+        defsWithinTerm = 0
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             append("<dl")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -348,9 +403,11 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func startDefTerm() {
+        termsWithinList += 1
+        defsWithinTerm = 0
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            ensureNewLine()
+            spaceBeforeBlock(itemNumber: termsWithinList)
             append("<dt>")
         case .markdown:
             ensureNewLine()
@@ -375,9 +432,10 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func startDefDef() {
+        defsWithinTerm += 1
         switch format {
         case .htmlDoc, .xhtmlDoc, .netscapeBookmarks, .htmlFragment:
-            ensureNewLine()
+            spaceBeforeBlock(itemNumber: defsWithinTerm)
             append("<dd>")
         case .markdown:
             ensureNewLine()
@@ -405,6 +463,7 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             writeLine("</dl>")
+            spaceAfterBlock()
         default:
             break
         }
@@ -414,7 +473,8 @@ public class Markedup: CustomStringConvertible {
     public func startPreformatted() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            writeLine("<pre>")
+            spaceBeforeBlock()
+            append("<pre>")
         case .markdown:
             break
         case .opml:
@@ -426,28 +486,6 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             writeLine("</pre>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-    }
-    
-    public func startCode() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            write("<code>")
-        case .markdown:
-            break
-        case .opml:
-            break
-        }
-    }
-    
-    public func finishCode() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            write("</code>")
         case .markdown:
             break
         case .opml:
@@ -489,7 +527,7 @@ public class Markedup: CustomStringConvertible {
     public func startParagraph() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            ensureNewLine()
+            spaceBeforeBlock()
             append("<p>")
         case .markdown:
             ensureNewLine()
@@ -501,7 +539,7 @@ public class Markedup: CustomStringConvertible {
     public func startParagraph(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            ensureNewLine()
+            spaceBeforeBlock()
             append("<p")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -531,7 +569,7 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("</p>")
-            newLine()
+            // spaceAfterBlock()
         case .markdown:
             newLine()
             newLine()
@@ -879,6 +917,7 @@ public class Markedup: CustomStringConvertible {
     public func startHeading(level: Int, id: String = "") {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             if id.count > 0 {
                 write("<h\(level) id=\"\(id)\">")
             } else {
@@ -896,7 +935,8 @@ public class Markedup: CustomStringConvertible {
     public func finishHeading(level: Int) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            writeLine("</h\(level)>")
+            write("</h\(level)>")
+            spaceAfterBlock()
         case .markdown:
             newLine()
         case .opml:
@@ -1042,9 +1082,13 @@ public class Markedup: CustomStringConvertible {
     public func horizontalRule() {
         switch format {
         case .htmlFragment, .htmlDoc, .netscapeBookmarks:
-            writeLine("<hr>")
-        case .xhtmlDoc:
+            spaceBeforeBlock()
             writeLine("<hr />")
+            spaceAfterBlock()
+        case .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("<hr />")
+            spaceAfterBlock()
         case .markdown:
             newLine()
             append("---")
@@ -1057,9 +1101,11 @@ public class Markedup: CustomStringConvertible {
     public func codeBlock(_ block: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             writeLine("<pre><code>")
             writeLine(codeConverter.convert(from: block))
             writeLine("</code></pre>")
+            spaceAfterBlock()
         case .markdown:
             let reader: LineReader = BigStringReader(block)
             reader.open()
@@ -1069,6 +1115,32 @@ public class Markedup: CustomStringConvertible {
                 line = reader.readLine()
             }
             reader.close()
+        case .opml:
+            break
+        }
+    }
+    
+    public func startCode() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            if lastCodeAdded == "<pre>" {
+                writeLine("<code>")
+            } else {
+                write("<code>")
+            }
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishCode() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            write("</code>")
+        case .markdown:
+            break
         case .opml:
             break
         }
@@ -1253,11 +1325,11 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func increaseIndent() {
-        currentIndent += spacesPerIndent
+        currentIndent += htmlFormatting.spacesPerIndent
     }
     
     public func decreaseIndent() {
-        currentIndent -= spacesPerIndent
+        currentIndent -= htmlFormatting.spacesPerIndent
         if currentIndent < 0 {
             currentIndent = 0
         }
@@ -1281,7 +1353,7 @@ public class Markedup: CustomStringConvertible {
         if blockQuoting && format == .markdown {
             write("> ")
         }
-        write(text)
+        append(text)
         newLine()
     }
     
@@ -1294,8 +1366,62 @@ public class Markedup: CustomStringConvertible {
     }
     
     var newLineStarted = true
+    var lastLineBlank = true
+    var withinListItem = false
+    var blocksWithinListItem = 0
+    var termsWithinList = 0
+    var defsWithinTerm = 0
     
-    func ensureNewLine() {
+    func spaceBeforeBlock(itemNumber: Int = -1) {
+        if withinListItem {
+            blocksWithinListItem += 1
+        }
+        switch htmlFormatting.blockSep {
+        case .none:
+            break
+        case .newline:
+            if !withinListItem || blocksWithinListItem > 1 {
+                ensureNewLine()
+            }
+        case .newlineX2:
+            if !withinListItem  || blocksWithinListItem > 1 {
+                ensureNewLine()
+                if itemNumber < 0 {
+                    if !code.isEmpty {
+                        newLine()
+                    }
+                } else if itemNumber > 1 {
+                    if !code.isEmpty {
+                        newLine()
+                    }
+                }
+            }
+        }
+    }
+    
+    func spaceAfterBlock() {
+        switch htmlFormatting.blockSep {
+        case .none:
+            break
+        case .newline:
+            if !withinListItem || blocksWithinListItem > 1 {
+                ensureNewLine()
+            }
+        case .newlineX2:
+            if !withinListItem || blocksWithinListItem > 1 {
+                ensureNewLine()
+            }
+        }
+    }
+    
+    public func ensureBlankLine() {
+        if !lastLineBlank {
+            ensureNewLine()
+            newLine()
+        }
+    }
+    
+    public func ensureNewLine() {
         if !newLineStarted {
             newLine()
         }
@@ -1303,17 +1429,21 @@ public class Markedup: CustomStringConvertible {
     
     public func newLine() {
         code.append("\n")
+        lastLineBlank = newLineStarted
         newLineStarted = true
     }
     
     public func append(_ more: String) {
         code.append(more)
         newLineStarted = false
+        lastLineBlank = false
+        lastCodeAdded = more
     }
     
     func append(_ char: Character) {
         code.append(char)
         newLineStarted = false
+        lastLineBlank = false
     }
     
     /// Parse the passed text line, using a subset of Markdown syntax, and convert it
@@ -1430,6 +1560,7 @@ public class Markedup: CustomStringConvertible {
             lastCharWasWhiteSpace = true
         }
         newLineStarted = false
+        lastLineBlank = false
     }
     
     /// Write out an en dash
