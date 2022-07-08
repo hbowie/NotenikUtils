@@ -70,26 +70,32 @@ public class Markedup: CustomStringConvertible {
     // -----------------------------------------------------------
     
     public func templateNextRec() {
+        ensureNewLine()
         writeLine("<?nextrec?>")
     }
     
     public func templateLoop() {
+        ensureNewLine()
         writeLine("<?loop?>")
     }
     
     public func templateOutput(filename: String) {
+        ensureNewLine()
         writeLine("<?output \"\(filename)\" ?>")
     }
     
     public func templateIfField(fieldname: String) {
+        ensureNewLine()
         writeLine("<?if \"\(fieldname)\" ?>")
     }
     
     public func templateEndIf() {
+        ensureNewLine()
         writeLine("<?endif?>")
     }
     
     public func templateAllFields() {
+        ensureNewLine()
         writeLine("<?allfields?>")
     }
     
