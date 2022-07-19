@@ -99,6 +99,10 @@ public class Markedup: CustomStringConvertible {
         writeLine("<?allfields?>")
     }
     
+    public func templateVariable(name: String) {
+        write("=$\(name)$=")
+    }
+    
     // -----------------------------------------------------------
     //
     // MARK: Start and complete a document, if requested.
