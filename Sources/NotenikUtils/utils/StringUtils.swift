@@ -342,7 +342,7 @@ public class StringUtils {
                 let nextIndex = str.index(after: index)
                 nextChar = str[nextIndex]
             }
-            if str[index] == "." && nextChar == " " {
+            if (str[index] == "." || str[index] == ";") && nextChar == " " {
                 lastSentenceEnd = str.index(after: index)
                 sentenceCount += 1
             } else if str[index] == " " {
