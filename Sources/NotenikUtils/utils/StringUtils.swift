@@ -55,11 +55,13 @@ public class StringUtils {
     /// - Returns: The lowest common denominator, allowing easy comparison,
     ///            and eliminating trivial differences.
     ///
-    public static func toCommon(_ str : String) -> String {
+    public static func toCommon(_ str: String, leavingSlashes: Bool = false) -> String {
         let lower = str.lowercased()
         var common = ""
         for c in lower {
             if isDigit(c) || isAlpha(c) {
+                common.append(c)
+            } else if c == "/" && leavingSlashes {
                 common.append(c)
             } else if c == " " {
                 if common == "a" || common == "the" || common == "an" {
@@ -76,7 +78,7 @@ public class StringUtils {
     ///
     /// - Parameter from: The file name to be converted.
     /// - Returns: The converted file name.
-    public static func toCommonFileName(_ from: String) -> String {
+    public static func toCommonFileName(_ from: String, leavingSlashes: Bool = false) -> String {
         var out = ""
         var whiteSpace = true
         var index = from.startIndex
@@ -100,6 +102,8 @@ public class StringUtils {
                     out.append(char)
                     whiteSpace = false
                 }
+            } else if char == "/" && leavingSlashes {
+                out.append(char)
             } else if isWhitespace(char) || char == "_" || char == "/" || char == "-" {
                 if !whiteSpace && nextIndex < from.endIndex {
                     out.append("-")
@@ -729,6 +733,41 @@ public class StringUtils {
             end = html.index(html.endIndex, offsetBy: -4)
         }
         return String(html[start..<end])
+    }
+    
+    /// Split a string into a path and an item name, with the last forward slash acting
+    /// as a separator between the two. If no slash is found, then the returned
+    /// path will be empty.
+    /// - Parameter str: A string possibly containing a slash.
+    /// - Returns: A path (possibly empty) and an item name.
+    public static func splitPath(_ str: String) -> (String, String) {
+        var path = ""
+        var item = ""
+        var slashFound = false
+        var index = str.endIndex
+        while index > str.startIndex {
+            index = str.index(before: index)
+            if str[index] == "/" {
+                slashFound = true
+                break
+            }
+        }
+        
+        // No slash found.
+        if !slashFound {
+            return ("", str)
+        }
+        
+        let itemStart = str.index(after: index)
+        
+        // Slash found at end of string -- just drop it.
+        if itemStart >= str.endIndex {
+            return ("", String(str[str.startIndex..<index]))
+        }
+        
+        path = String(str[str.startIndex..<index])
+        item = String(str[itemStart..<str.endIndex])
+        return (path, item)
     }
     
 }
