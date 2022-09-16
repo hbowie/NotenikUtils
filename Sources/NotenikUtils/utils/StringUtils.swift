@@ -22,6 +22,23 @@ public class StringUtils {
     static let upperChars = "A"..."Z"
     static let digits     = "0"..."9"
     
+    public static func prepHTMLforJSON(_ value: String) -> String {
+        var v = value
+        var i = v.startIndex
+        for c in v {
+            if c == "\"" {
+                v.insert("\\", at: i)
+                i = v.index(after: i)
+                i = v.index(after: i)
+            } else if c.isNewline {
+                v.remove(at: i)
+            } else {
+                i = v.index(after: i)
+            }
+        }
+        return v
+    }
+    
     /// Write a single column's worth of data. The writer will enclose in quotation marks
     /// and encode embedded quotation marks as needed (with two quote chars representing one).
     public static func encaseInQuotesAsNeeded(_ value: String, sepChar: Character = "\t") -> String {
@@ -175,7 +192,7 @@ public class StringUtils {
         
         var pendingSpaces = 0
         for char in from {
-            if char.isWhitespace || char.isPunctuation {
+            if char.isWhitespace || char.isPunctuation || char == "\"" {
                 pendingSpaces += 1
             } else {
                 if pendingSpaces > 0 {
@@ -334,31 +351,59 @@ public class StringUtils {
     /// Extract the beginning of a long piece of text, trying to end with
     /// a complete sentence. 
     public static func summarize(_ str: String, max: Int = 250) -> String {
-        guard str.count > max else { return str }
+        
+        var end = 0
+        if str.count > max {
+            end = max
+        } else {
+            end = str.count
+        }
+        
         var sentenceCount = 0
         var index = str.startIndex
         var lastSentenceEnd = str.startIndex
         var lastSpace = str.startIndex
         var i = 0
-        while i < max {
+        
+        var blank = true
+        var spaceCount = 0
+        
+        while i < end {
+            
+            // Get the next character following the current one.
             var nextChar: Character = " "
-            if i < (max - 1) {
+            if i < (end - 1) {
                 let nextIndex = str.index(after: index)
                 nextChar = str[nextIndex]
             }
-            if (str[index] == "." || str[index] == ";") && nextChar == " " {
+            
+            if (str[index] == "<" && !nextChar.isWhitespace) {
+                if spaceCount == 0 {
+                    lastSpace = index
+                }
+                i = end
+            } else if (str[index] == "." || str[index] == ";") && nextChar == " " {
                 lastSentenceEnd = str.index(after: index)
                 sentenceCount += 1
-            } else if str[index] == " " {
+                spaceCount = 0
+            } else if str[index].isWhitespace {
+                spaceCount += 1
                 lastSpace = index
+            } else {
+                blank = false
+                spaceCount = 0
             }
+            
             index = str.index(after: index)
             i += 1
         }
-        if sentenceCount > 0 {
+        
+        if blank {
+            return ""
+        } else if sentenceCount > 0 {
             return String(str[str.startIndex..<lastSentenceEnd])
         } else {
-            return String(str[str.startIndex..<lastSpace]) + "...."
+            return String(str[str.startIndex..<lastSpace]) + "..."
         }
     }
     

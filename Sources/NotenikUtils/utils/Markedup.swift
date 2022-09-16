@@ -244,12 +244,15 @@ public class Markedup: CustomStringConvertible {
     //
     // -----------------------------------------------------------
     
-    public func startDiv(klass: String?) {
+    public func startDiv(klass: String?, id: String? = nil) {
         if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
             spaceBeforeBlock()
             append("<div")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
+            }
+            if id != nil && !id!.isEmpty {
+                append(" id=\"\(id!)\"")
             }
             append(">")
             newLine()
@@ -708,6 +711,54 @@ public class Markedup: CustomStringConvertible {
             break
         }
         openTableCellTag = ""
+    }
+    
+    public func startForm(action: String, method: String, id: String) {
+        spaceBeforeBlock()
+        append("<form action=\"\(action)\" method=\"\(method)\" id=\"\(id)\">")
+    }
+    
+    public func finishForm() {
+        append("</form>")
+    }
+    
+    public func formLabel(labelFor: String, labelText: String) {
+        spaceBeforeBlock()
+        append("<label for=\"\(labelFor)\">\(labelText)</label>")
+    }
+    
+    public func formInput(inputType: String, name: String, value: String?, id: String?) {
+        spaceBeforeBlock()
+        append("<input type=\"\(inputType)\" name=\"\(name)\"")
+        if value != nil && !value!.isEmpty {
+            append(" value=\"\(value!)\"")
+        }
+        if id != nil && !id!.isEmpty {
+            append(" id=\"\(id!)\"")
+        }
+        append(">")
+    }
+    
+    public func formButton(buttonType: String, buttonText: String, klass: String? = nil, id: String? = nil) {
+        spaceBeforeBlock()
+        append("<button type=\"\(buttonType)\"")
+        if klass != nil && !klass!.isEmpty {
+            append(" class=\"\(klass!)\"")
+        }
+        if id != nil && !id!.isEmpty {
+            append(" id=\"\(id!)\"")
+        }
+        append(">\(buttonText)</button>")
+    }
+    
+    public func startScript() {
+        spaceBeforeBlock()
+        append("<script>")
+    }
+    
+    public func finishScript() {
+        spaceBeforeBlock()
+        append("</script>")
     }
     
     public func startStrong() {
