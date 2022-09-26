@@ -22,6 +22,35 @@ public class StringUtils {
     static let upperChars = "A"..."Z"
     static let digits     = "0"..."9"
     
+    public static func matchCounts(str1: String, str2: String) -> (Int, Int) {
+        var index1 = str1.startIndex
+        var index2 = str2.startIndex
+        var matched = 0
+        var unmatched = 0
+        while index1 < str1.endIndex && index2 < str2.endIndex {
+            let char1 = str1[index1]
+            let lower1 = char1.lowercased()
+            let char2 = str2[index2]
+            let lower2 = char2.lowercased()
+            if lower1 == lower2 {
+                matched += 1
+                index1 = str1.index(after: index1)
+                index2 = str2.index(after: index2)
+            } else if char1.isWhitespace || char1.isPunctuation {
+                index1 = str1.index(after: index1)
+            } else if char2.isWhitespace || char2.isPunctuation {
+                index2 = str2.index(after: index2)
+            } else if str1.count < str2.count {
+                unmatched += 1
+                index2 = str2.index(after: index2)
+            } else {
+                unmatched += 1
+                index1 = str1.index(after: index1)
+            }
+        }
+        return (matched, unmatched)
+    }
+    
     public static func prepHTMLforJSON(_ value: String) -> String {
         var v = value
         var i = v.startIndex
