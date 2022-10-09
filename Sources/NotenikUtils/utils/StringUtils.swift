@@ -389,6 +389,8 @@ public class StringUtils {
         }
         
         var sentenceCount = 0
+        var lineCharsCount = 0
+        var lastChar: Character = " "
         var index = str.startIndex
         var lastSentenceEnd = str.startIndex
         var lastSpace = str.startIndex
@@ -400,22 +402,29 @@ public class StringUtils {
         while i < end {
             
             // Get the next character following the current one.
+            let currChar = str[index]
             var nextChar: Character = " "
             if i < (end - 1) {
                 let nextIndex = str.index(after: index)
                 nextChar = str[nextIndex]
             }
             
-            if (str[index] == "<" && !nextChar.isWhitespace) {
+            if currChar.isNewline {
+                lineCharsCount = 0
+            } else if lineCharsCount > 0 || (currChar != "#" && !currChar.isWhitespace) {
+                lineCharsCount += 1
+            }
+            
+            if (currChar == "<" && !nextChar.isWhitespace) {
                 if spaceCount == 0 {
                     lastSpace = index
                 }
                 i = end
-            } else if (str[index] == "." || str[index] == ";") && nextChar == " " {
+            } else if ((currChar == "." || currChar == ";") && nextChar == " " && (!lastChar.isWholeNumber || lineCharsCount > 5)) {
                 lastSentenceEnd = str.index(after: index)
                 sentenceCount += 1
                 spaceCount = 0
-            } else if str[index].isWhitespace {
+            } else if currChar.isWhitespace {
                 spaceCount += 1
                 lastSpace = index
             } else {
@@ -423,6 +432,7 @@ public class StringUtils {
                 spaceCount = 0
             }
             
+            lastChar = currChar
             index = str.index(after: index)
             i += 1
         }
