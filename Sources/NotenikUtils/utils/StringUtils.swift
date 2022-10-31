@@ -22,6 +22,32 @@ public class StringUtils {
     static let upperChars = "A"..."Z"
     static let digits     = "0"..."9"
     
+    /// Examine the passed string and separate out any preceding number from any following alphabetic label,
+    /// dropping any intervening spacing and punctuation.
+    /// - Parameter str: A string containing some sort of positive integer followed by some sort
+    /// of alphabetic label.
+    /// - Returns: The number, as an integer, if any was found; otherwise returns -1; then the
+    ///  label. 
+    public static func splitNumberAndLabel(str: String) -> (Int, String) {
+        var number = 0
+        var digitCount = 0
+        let label = SolidString()
+        for c in str {
+            if StringUtils.isDigit(c) {
+                number = (number * 10) + Int(String(c))!
+                digitCount += 1
+            } else if StringUtils.isAlpha(c) {
+                label.append(c)
+            } else if StringUtils.isWhitespace(c) && !label.isEmpty {
+                label.append(" ")
+            }
+        }
+        if number == 0 && digitCount == 0 {
+            number = -1
+        }
+        return (number, label.str)
+    }
+    
     public static func matchCounts(str1: String, str2: String) -> (Int, Int) {
         var index1 = str1.startIndex
         var index2 = str2.startIndex

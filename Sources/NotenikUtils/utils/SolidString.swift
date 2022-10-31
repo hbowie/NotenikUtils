@@ -42,6 +42,10 @@ public class SolidString: CustomStringConvertible {
         return str
     }
     
+    public var isEmpty: Bool {
+        return str.isEmpty
+    }
+    
     /// Return the lowest common denominator form of the string.
     public var common: String {
         return StringUtils.toCommon(str)
