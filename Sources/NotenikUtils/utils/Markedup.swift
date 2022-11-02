@@ -1070,10 +1070,11 @@ public class Markedup: CustomStringConvertible {
                       alt: String,
                       title: String,
                       caption: String) {
+        let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             startFigure()
-            append("<img src=\"\(path)\" alt=\"\(alt)\"")
+            append("<img src=\"\(pathFixed)\" alt=\"\(alt)\"")
             if !title.isEmpty {
                 append(" title=\"\(title)\"")
             }
@@ -1126,9 +1127,10 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func image(alt: String, path: String, title: String? = nil) {
+        let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            append("<img src=\"\(path)\" alt=\"\(alt)\"")
+            append("<img src=\"\(pathFixed)\" alt=\"\(alt)\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
             }
