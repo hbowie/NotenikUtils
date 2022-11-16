@@ -509,7 +509,7 @@ public class StringUtils {
                 fileName.append(" ")
             } else if c == "_" || c == "-" {
                 fileName.append(c)
-            } else if c == "\\" || c == "(" || c == ")" || c == "[" || c == "]" || c == "{" || c == "}" {
+            } else if c == "\\" || c == "(" || c == ")" || c == "[" || c == "]" || c == "{" || c == "}" || c == "?" {
                 // Let's just drop some punctuation
             } else if c == "/" {
                 if lastOut != " " {
@@ -533,7 +533,10 @@ public class StringUtils {
         }
         
         if fileName.count > 0 {
-            if fileName.hasSuffix("-") || fileName.hasSuffix(" ") {
+            if fileName.hasSuffix("-") {
+                fileName.removeLast()
+            }
+            if fileName.hasSuffix(" ") {
                 fileName.removeLast()
             }
             if fileName.hasSuffix(".com") || fileName.hasSuffix(".COM") {
