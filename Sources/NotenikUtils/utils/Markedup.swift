@@ -1005,12 +1005,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func link(text: String, path: String, title: String? = nil) {
+    public func link(text: String, path: String, title: String? = nil, style: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
+            }
+            if style != nil && !style!.isEmpty {
+                append(" style=\"\(style!)\"")
             }
             append(">" + text + "</a>")
         case .markdown:
