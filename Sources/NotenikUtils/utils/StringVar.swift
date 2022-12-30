@@ -13,13 +13,21 @@
 import Foundation
 
 /// Provide String Variations in an efficient manner.
-public class StringVar: CustomStringConvertible {
+public class StringVar: CustomStringConvertible, Comparable, Equatable {
     
     /// The original String
     public var original: String {
         return _original
     }
     var _original = ""
+    
+    public var isEmpty: Bool {
+        return _original.isEmpty
+    }
+    
+    public var count: Int {
+        return _original.count
+    }
     
     /// The lowercase version of the String, converted once, on demand.
     public var lowered: String {
@@ -47,5 +55,33 @@ public class StringVar: CustomStringConvertible {
     /// Initialize with the original  String. 
     public init(_ original: String) {
         self._original = original
+    }
+    
+    public func append(_ c: Character) {
+        _original.append(c)
+        _lowered = nil
+        _common = nil
+    }
+    
+    public func trim() {
+        _original = StringUtils.trim(_original)
+        _lowered = nil
+        _common = nil
+    }
+    
+    public static func == (lhs: StringVar, rhs: StringVar) -> Bool {
+        return lhs.original == rhs.original
+    }
+    
+    public static func < (lhs: StringVar, rhs: StringVar) -> Bool {
+        if lhs.lowered < rhs.lowered {
+            return true
+        } else if lhs.lowered > rhs.lowered {
+            return false
+        } else if lhs.original < rhs.original {
+            return true
+        } else {
+            return false
+        }
     }
 }
