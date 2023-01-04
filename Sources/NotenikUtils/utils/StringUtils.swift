@@ -632,7 +632,7 @@ public class StringUtils {
         var outStr = ""
         var pendingSpace = false
         for c in inStr {
-            if c.isNewline || c.isWhitespace {
+            if c.isWhitespace || c.isNewline  {
                 if outStr.count > 0 {
                     pendingSpace = true
                 }
