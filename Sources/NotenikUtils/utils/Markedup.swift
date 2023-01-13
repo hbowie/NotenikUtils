@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 1/25/19.
-//  Copyright © 2019 - 2022 Herb Bowie (https://hbowie.net)
+//  Copyright © 2019 - 2023 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -44,6 +44,8 @@ public class Markedup: CustomStringConvertible {
     let xmlConverter = StringConverter()
     let codeConverter = StringConverter()
     
+    var compacting = false
+    
     public init() {
         xmlConverter.addXML()
         codeConverter.addHTML()
@@ -61,6 +63,15 @@ public class Markedup: CustomStringConvertible {
     
     public func flushCode() {
         code = ""
+    }
+    
+    public func startCompacting() {
+        compacting = true
+        compacting = true
+    }
+    
+    public func finishCompacting() {
+        compacting = false
     }
     
     // -----------------------------------------------------------
@@ -1093,10 +1104,14 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startFigure() {
+    public func startFigure(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            writeLine("<figure>")
+            var klassAttr = ""
+            if klass != nil && !klass!.isEmpty {
+                klassAttr = " class=\"\(klass!)\""
+            }
+            writeLine("<figure\(klassAttr)>")
         default:
             break
         }
@@ -1494,7 +1509,9 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func newLine() {
-        code.append("\n")
+        if !compacting {
+            code.append("\n")
+        }
         lastLineBlank = newLineStarted
         newLineStarted = true
     }
@@ -1625,6 +1642,22 @@ public class Markedup: CustomStringConvertible {
             append(" ")
             lastCharWasWhiteSpace = true
         }
+        newLineStarted = false
+        lastLineBlank = false
+    }
+    
+    public func writeNonBreakingSpace() {
+        lastCharWasEmDash = false
+        whiteSpacePending = false
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("&nbsp;")
+        case .markdown:
+            append("&nbsp;")
+        case .opml:
+            append(" ")
+        }
+        lastCharWasWhiteSpace = true
         newLineStarted = false
         lastLineBlank = false
     }
