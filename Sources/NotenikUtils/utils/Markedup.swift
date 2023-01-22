@@ -602,10 +602,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startTable() {
+    public func startTable(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            append("<table>")
+            var tag = "<table"
+            if klass != nil && !klass!.isEmpty {
+                tag.append(" class=\"\(klass!)\"")
+            }
+            tag.append(">")
+            append(tag)
             newLine()
         case .markdown:
             newLine()
