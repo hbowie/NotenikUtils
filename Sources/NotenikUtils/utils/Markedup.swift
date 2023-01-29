@@ -669,12 +669,15 @@ public class Markedup: CustomStringConvertible {
         openTableCellTag = ""
     }
     
-    public func startTableHeader(style: String? = nil, colspan: Int = 1) {
+    public func startTableHeader(style: String? = nil, klass: String? = nil, colspan: Int = 1) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             var tag = "<th"
             if style != nil && !style!.isEmpty {
                 tag.append(" style=\"\(style!)\"")
+            }
+            if klass != nil && !klass!.isEmpty {
+                tag.append(" class=\"\(klass!)\"")
             }
             if colspan > 1 {
                 tag.append(" colspan=\"\(colspan)\"")
@@ -703,12 +706,15 @@ public class Markedup: CustomStringConvertible {
         openTableCellTag = ""
     }
     
-    public func startTableData(style: String? = nil, colspan: Int = 1) {
+    public func startTableData(style: String? = nil, klass: String? = nil, colspan: Int = 1) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             var tag = "<td"
             if style != nil && !style!.isEmpty {
                 tag.append(" style=\"\(style!)\"")
+            }
+            if klass != nil && !klass!.isEmpty {
+                tag.append(" class=\"\(klass!)\"")
             }
             if colspan > 1 {
                 tag.append(" colspan=\"\(colspan)\"")
