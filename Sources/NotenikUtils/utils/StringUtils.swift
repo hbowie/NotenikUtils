@@ -119,8 +119,8 @@ public class StringUtils {
         }
     }
     
-    /// Convert a string to its lowest common denominator, dropping white space and punctuation,
-    /// converting all letters to lowercase, and dropping leading articles (a, an, the).
+    /// Convert a string to its lowest common denominator, dropping white space, punctuation,
+    /// and embedded tags, converting all letters to lowercase, and dropping leading articles (a, an, the).
     ///
     /// - Parameter str: The string to be converted.
     ///
@@ -130,11 +130,27 @@ public class StringUtils {
     public static func toCommon(_ str: String, leavingSlashes: Bool = false) -> String {
         let lower = str.lowercased()
         var common = ""
+        var startingTagCount = 0
+        var charsWithinTags = 0
         for c in lower {
             if isDigit(c) || isAlpha(c) {
                 common.append(c)
+                if startingTagCount > 0 {
+                    charsWithinTags += 1
+                }
             } else if c == "/" && leavingSlashes {
                 common.append(c)
+            } else if c == "<" {
+                if startingTagCount == 0 {
+                    charsWithinTags = 0
+                }
+                startingTagCount += 1
+            } else if c == ">" && startingTagCount > 0 {
+                startingTagCount -= 1
+                if startingTagCount == 0 && charsWithinTags > 0 {
+                    common.removeLast(charsWithinTags)
+                    charsWithinTags = 0
+                }
             } else if c == " " {
                 if common == "a" || common == "the" || common == "an" {
                     common = ""
