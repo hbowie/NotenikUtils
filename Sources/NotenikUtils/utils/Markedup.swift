@@ -1035,7 +1035,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func link(text: String, path: String, title: String? = nil, style: String? = nil) {
+    public func link(text: String, path: String, title: String? = nil, style: String? = nil, blankTarget: Bool = false) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
@@ -1045,6 +1045,9 @@ public class Markedup: CustomStringConvertible {
             if style != nil && !style!.isEmpty {
                 append(" style=\"\(style!)\"")
             }
+            if blankTarget {
+                append(" target=\"_blank\" rel=\"noopener noreferrer\"")
+            }
             append(">" + text + "</a>")
         case .markdown:
             append("[" + text + "](" + path + ")")
@@ -1053,12 +1056,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startLink(path: String, title: String? = nil) {
+    public func startLink(path: String, title: String? = nil, blankTarget: Bool = false) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
+            }
+            if blankTarget {
+                append(" target=\"_blank\" rel=\"noopener noreferrer\"")
             }
             append(">")
         case .markdown:
