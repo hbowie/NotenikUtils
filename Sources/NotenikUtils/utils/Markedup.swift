@@ -1046,7 +1046,7 @@ public class Markedup: CustomStringConvertible {
                 append(" style=\"\(style!)\"")
             }
             if blankTarget {
-                append(" target=\"_blank\" rel=\"noopener noreferrer\"")
+                append(" target=\"_blank\" rel=\"noopener\"")
             }
             append(">" + text + "</a>")
         case .markdown:
@@ -1064,7 +1064,7 @@ public class Markedup: CustomStringConvertible {
                 append(" title=\"\(title!)\"")
             }
             if blankTarget {
-                append(" target=\"_blank\" rel=\"noopener noreferrer\"")
+                append(" target=\"_blank\" rel=\"noopener\"")
             }
             append(">")
         case .markdown:
