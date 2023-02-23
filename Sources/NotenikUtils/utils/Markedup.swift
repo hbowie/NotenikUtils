@@ -602,10 +602,13 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startTable(klass: String? = nil) {
+    public func startTable(klass: String? = nil, id: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             var tag = "<table"
+            if id != nil && !id!.isEmpty {
+                tag.append(" id=\"\(id!)\"")
+            }
             if klass != nil && !klass!.isEmpty {
                 tag.append(" class=\"\(klass!)\"")
             }
@@ -669,10 +672,13 @@ public class Markedup: CustomStringConvertible {
         openTableCellTag = ""
     }
     
-    public func startTableHeader(style: String? = nil, klass: String? = nil, colspan: Int = 1) {
+    public func startTableHeader(onclick: String? = nil, style: String? = nil, klass: String? = nil, colspan: Int = 1) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             var tag = "<th"
+            if onclick != nil && !onclick!.isEmpty {
+                tag.append(" onclick=\"\(onclick!)\"")
+            }
             if style != nil && !style!.isEmpty {
                 tag.append(" style=\"\(style!)\"")
             }
