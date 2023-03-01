@@ -21,6 +21,10 @@ public class Markedup: CustomStringConvertible {
     //
     // -----------------------------------------------------------
     
+    public static let htmlClassWikiLink = "wiki-link"
+    public static let htmlClassNavLink  = "nav-link"
+    public static let htmlClassExtLink  = "ext-link"
+    
     var format: MarkedupFormat = .htmlFragment
     
     var htmlFormatting = HTMLFormatting()
@@ -1041,7 +1045,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func link(text: String, path: String, title: String? = nil, style: String? = nil, blankTarget: Bool = false) {
+    public func link(text: String, path: String, title: String? = nil, style: String? = nil, klass: String? = nil, blankTarget: Bool = false) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
@@ -1050,6 +1054,9 @@ public class Markedup: CustomStringConvertible {
             }
             if style != nil && !style!.isEmpty {
                 append(" style=\"\(style!)\"")
+            }
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
             }
             if blankTarget {
                 append(" target=\"_blank\" rel=\"noopener\"")
@@ -1062,12 +1069,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startLink(path: String, title: String? = nil, blankTarget: Bool = false) {
+    public func startLink(path: String, title: String? = nil, klass: String? = nil, blankTarget: Bool = false) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
+            }
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
             }
             if blankTarget {
                 append(" target=\"_blank\" rel=\"noopener\"")
