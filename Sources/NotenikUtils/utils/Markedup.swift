@@ -552,11 +552,15 @@ public class Markedup: CustomStringConvertible {
         finishParagraph()
     }
     
-    public func startParagraph() {
+    public func startParagraph(id: String = "") {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
-            append("<p>")
+            if id.isEmpty {
+                append("<p>")
+            } else {
+                append("<p id=\"\(id)\">")
+            }
         case .markdown:
             ensureNewLine()
         case .opml:
