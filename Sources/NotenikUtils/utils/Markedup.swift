@@ -878,10 +878,14 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 0
     }
     
-    public func startCite() {
+    public func startCite(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            append("<cite>")
+            append("<cite")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
         case .markdown:
             append("*")
         case .opml:
