@@ -1502,7 +1502,7 @@ public class Markedup: CustomStringConvertible {
     var termsWithinList = 0
     var defsWithinTerm = 0
     
-    func spaceBeforeBlock(itemNumber: Int = -1) {
+    public func spaceBeforeBlock(itemNumber: Int = -1) {
         if withinListItem {
             blocksWithinListItem += 1
         }
