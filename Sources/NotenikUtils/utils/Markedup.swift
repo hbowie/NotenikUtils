@@ -255,6 +255,116 @@ public class Markedup: CustomStringConvertible {
     
     // -----------------------------------------------------------
     //
+    // MARK: Major body sections.
+    //
+    // -----------------------------------------------------------
+    
+    public func header(_ text: String) {
+        startHeader()
+        writeLine(text)
+        finishHeader()
+    }
+    
+    public func startHeader() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("<header>")
+        default:
+            break
+        }
+    }
+    
+    public func finishHeader() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("</header>")
+        default:
+            break
+        }
+    }
+    
+    public func nav(_ text: String) {
+        startNav()
+        writeLine(text)
+        finishNav()
+    }
+    
+    public func startNav() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("<nav>")
+        default:
+            break
+        }
+    }
+    
+    public func finishNav() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("</nav>")
+        default:
+            break
+        }
+    }
+    
+    public func footer(_ text: String) {
+        startFooter()
+        writeLine(text)
+        finishFooter()
+    }
+    
+    public func startFooter() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("<footer>")
+        default:
+            break
+        }
+    }
+    
+    public func finishFooter() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("</footer>")
+        default:
+            break
+        }
+    }
+    
+    public func main(_ text: String) {
+        startMain()
+        writeLine(text)
+        finishMain()
+    }
+    
+    public func startMain() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("<main>")
+        default:
+            break
+        }
+    }
+    
+    public func finishMain() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("</main>")
+        default:
+            break
+        }
+    }
+    
+    // -----------------------------------------------------------
+    //
     // MARK: Block Level Tags.
     //
     // -----------------------------------------------------------
