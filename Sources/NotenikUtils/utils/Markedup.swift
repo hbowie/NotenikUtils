@@ -139,7 +139,8 @@ public class Markedup: CustomStringConvertible {
     public func startDoc(withTitle title: String?,
                          withCSS css: String?,
                          linkToFile: Bool = false,
-                         withJS js: String? = nil) {
+                         withJS js: String? = nil,
+                         epub3: Bool = false) {
         currentIndent = 0
         switch format {
         case .htmlDoc:
@@ -166,11 +167,20 @@ public class Markedup: CustomStringConvertible {
             writeLine("</head>")
             writeLine("<body>")
         case .xhtmlDoc:
-            writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")
-            writeLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">")
-            writeLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">")
+            if epub3 {
+                writeLine("<!DOCTYPE html>")
+                writeLine("<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">")
+            } else {
+                writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")
+                writeLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">")
+                writeLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">")
+            }
             writeLine("<head>")
-            writeLine("<meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=utf-8\" />")
+            if epub3 {
+                writeLine("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />")
+            } else {
+                writeLine("<meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=utf-8\" />")
+            }
             if title != nil && title!.count > 0 {
                 writeLine("<title>\(title!)</title>")
             }
@@ -419,7 +429,7 @@ public class Markedup: CustomStringConvertible {
     public func startOrderedList(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            spaceBeforeBlock()
+            ensureNewLine()
             append("<ol")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -452,7 +462,7 @@ public class Markedup: CustomStringConvertible {
     public func startUnorderedList(klass: String?) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            spaceBeforeBlock()
+            ensureNewLine()
             append("<ul")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
@@ -906,7 +916,7 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func startScript() {
-        spaceBeforeBlock()
+        ensureNewLine()
         append("<script>")
     }
     
@@ -1229,7 +1239,7 @@ public class Markedup: CustomStringConvertible {
         var caption = ""
         caption.append(captionPrefix)
         if !captionLink.isEmpty {
-            caption.append("<a href=\"" + captionLink + "\">")
+            caption.append("<a href=\"" + captionLink + "\" />")
         }
         caption.append(captionText)
         if !captionLink.isEmpty {
@@ -1251,7 +1261,7 @@ public class Markedup: CustomStringConvertible {
             if !title.isEmpty {
                 append(" title=\"\(title)\"")
             }
-            append(">")
+            append(" />")
             startFigureCaption()
             append(caption)
             finishFigureCaption()
@@ -1311,7 +1321,7 @@ public class Markedup: CustomStringConvertible {
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
             }
-            append(">")
+            append(" />")
         case .markdown:
             append("![" + alt + "](" + path + ")")
         case .opml:

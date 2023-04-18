@@ -16,7 +16,7 @@ import Foundation
 public class LineBalancer {
     
     var maxChars = 45
-    var sep = "<br>"
+    var sep = "<br />"
     
     var numberOfLines = 0
     var charsPerLine = 50
@@ -28,7 +28,7 @@ public class LineBalancer {
     var word = ""
     var html = false
     
-    public init(maxChars: Int = 50, sep: String = "<br>") {
+    public init(maxChars: Int = 50, sep: String = "<br />") {
         self.maxChars = maxChars
         self.sep = sep
     }
