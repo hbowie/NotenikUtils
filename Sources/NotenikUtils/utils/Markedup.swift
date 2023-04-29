@@ -915,6 +915,11 @@ public class Markedup: CustomStringConvertible {
         append(">\(buttonText)</button>")
     }
     
+    public func script(src: String) {
+        ensureNewLine()
+        writeLine("<script src=\"\(src)\" type=\"text/javascript\" />")
+    }
+    
     public func startScript() {
         ensureNewLine()
         append("<script>")

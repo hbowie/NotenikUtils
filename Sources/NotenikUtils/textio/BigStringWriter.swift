@@ -11,6 +11,7 @@
 
 import Foundation
 
+/// A class allowing the caller to write lines to a string. 
 public class BigStringWriter: LineWriter, CustomStringConvertible {
     
     public init() {
