@@ -3,7 +3,7 @@
 //  notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2020 Herb Bowie (https://powersurgepub.com)
+//  Copyright © 2018 - 2023 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -80,7 +80,7 @@ public class DateUtils {
         timestampFormatter = DateFormatter()
         timestampFormatter.locale = Locale(identifier: "en_US_POSIX")
         timestampFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-        timestampFormatter.dateFormat = "yyyyMMddkkmmss"
+        timestampFormatter.dateFormat = "yyyyMMddHHmmss"
     }
     
     public func refreshToday() {
