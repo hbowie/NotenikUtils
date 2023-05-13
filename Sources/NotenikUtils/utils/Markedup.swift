@@ -644,10 +644,57 @@ public class Markedup: CustomStringConvertible {
     public func startDetails(summary: String) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
             writeLine("<details>")
             if summary.count > 0 {
                 writeLine("<summary>\(summary)</summary>")
             }
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func startDetails(klass: String? = nil) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
+            append("<details")
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
+            }
+            writeLine(">")
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func startSummary(id: String = "", klass: String? = nil) {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            spaceBeforeBlock()
+            append("<summary")
+            if id.count > 0 {
+                append(" id=\"\(id)\"")
+            }
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
+            }
+            writeLine(">")
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishSummary() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            writeLine("</summary>")
         case .markdown:
             break
         case .opml:
@@ -1148,15 +1195,18 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startHeading(level: Int, id: String = "") {
+    public func startHeading(level: Int, id: String = "", klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
+            append("<h\(level)")
             if id.count > 0 {
-                write("<h\(level) id=\"\(id)\">")
-            } else {
-                write("<h\(level)>")
+                append(" id=\"\(id)\"")
+            } 
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
             }
+            append(">")
         case .markdown:
             ensureNewLine()
             newLine()
