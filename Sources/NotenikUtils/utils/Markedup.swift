@@ -656,13 +656,16 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startDetails(klass: String? = nil) {
+    public func startDetails(klass: String? = nil, openParm: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
             append("<details")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
+            }
+            if openParm != nil && !openParm!.isEmpty {
+                append(" open=\"\(openParm!)\"")
             }
             writeLine(">")
         case .markdown:
