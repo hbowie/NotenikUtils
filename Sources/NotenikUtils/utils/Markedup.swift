@@ -492,7 +492,7 @@ public class Markedup: CustomStringConvertible {
         listInProgress = " "
     }
     
-    public func startListItem() {
+    public func startListItem(level: Int = 0) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             ensureNewLine()
@@ -500,8 +500,13 @@ public class Markedup: CustomStringConvertible {
             withinListItem = true
             blocksWithinListItem = 0
         case .markdown:
+            var indent = ""
+            if level > 1 {
+                indent = String(repeating: " ", count: ((level - 1) * 4))
+            }
             switch listInProgress {
             case "u":
+                append(indent)
                 append("* ")
             case "o":
                 append("1. ")
