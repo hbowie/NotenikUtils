@@ -56,6 +56,13 @@ public class SolidString: CustomStringConvertible {
         return str.count
     }
     
+    /// Append the characters within the string.
+    public func append(_ chars: String) {
+        for char in chars {
+            append(char)
+        }
+    }
+    
     /// Append another character, omitting excessive spacing. 
     public func append(_ char: Character) {
         if char.isWhitespace {
