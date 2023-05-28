@@ -36,7 +36,7 @@ public class StringUtils {
             if StringUtils.isDigit(c) {
                 number = (number * 10) + Int(String(c))!
                 digitCount += 1
-            } else if StringUtils.isAlpha(c) {
+            } else if c.isLetter {
                 label.append(c)
             } else if StringUtils.isWhitespace(c) && !label.isEmpty {
                 label.append(" ")
@@ -133,7 +133,7 @@ public class StringUtils {
         var startingTagCount = 0
         var charsWithinTags = 0
         for c in lower {
-            if isDigit(c) || isAlpha(c) {
+            if isDigit(c) || c.isLetter {
                 common.append(c)
                 if startingTagCount > 0 {
                     charsWithinTags += 1
@@ -179,7 +179,7 @@ public class StringUtils {
                     nextChar = from[nextIndex]
                 }
             }
-            if isAlpha(char) {
+            if char.isLetter {
                 out.append(char.lowercased())
                 whiteSpace = false
             } else if isDigit(char) {
@@ -513,7 +513,7 @@ public class StringUtils {
                 lastOut = StringUtils.charAt(index: fileName.count - 1, str: fileName)
             }
             
-            if StringUtils.isAlpha(c) {
+            if c.isLetter {
                 fileName.append(c)
             } else if StringUtils.isDigit(c) {
                 fileName.append(c)
