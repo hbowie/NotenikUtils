@@ -87,6 +87,8 @@ public class StringUtils {
                 i = v.index(after: i)
             } else if c.isNewline {
                 v.remove(at: i)
+                v.insert(" ", at: i)
+                i = v.index(after: i)
             } else {
                 i = v.index(after: i)
             }
