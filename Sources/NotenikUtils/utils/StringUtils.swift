@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2021 Herb Bowie (https://hbowie.net)
+//  Copyright © 2018 - 2023 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -18,9 +18,9 @@ public class StringUtils {
         
     }
     
-    static let lowerChars = "a"..."z"
-    static let upperChars = "A"..."Z"
-    static let digits     = "0"..."9"
+    public static let lowerChars = "a"..."z"
+    public static let upperChars = "A"..."Z"
+    public static let digits     = "0"..."9"
     
     /// Examine the passed string and separate out any preceding number from any following alphabetic label,
     /// dropping any intervening spacing and punctuation.

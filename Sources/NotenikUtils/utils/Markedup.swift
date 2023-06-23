@@ -1560,7 +1560,7 @@ public class Markedup: CustomStringConvertible {
     }
     
     /// Encode restricted characters as XML entities.
-    func appendXML(_ text: String) {
+    public func appendXML(_ text: String) {
         append(xmlConverter.convert(from: text))
     }
     
