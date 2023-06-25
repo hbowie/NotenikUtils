@@ -21,11 +21,13 @@ public class PopConverter {
     
     let urlOK = NSMutableCharacterSet.alphanumeric()
     
-    public static let unreserved = "-._~/:?=&"
-    
     private init() {
         xmlConverter.addXML()
         urlOK.addCharacters(in: "-._~/:?=&")
+    }
+    
+    public func removePercentTwenty(_ str: String) -> String {
+        return str.replacingOccurrences(of: "%20", with: " ")
     }
     
     public func toURL(_ str: String) -> String {

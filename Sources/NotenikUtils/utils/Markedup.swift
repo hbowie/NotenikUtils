@@ -1151,7 +1151,7 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .markdown, .netscapeBookmarks:
             if headingLevel == 0 {
-                startParagraph()
+                startParagraph(id: htmlID)
                 if bold {
                     startStrong()
                 }
