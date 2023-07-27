@@ -14,10 +14,14 @@ import Foundation
  A singleton class providing access to a number of useful date utilities.
  */
 public class DateUtils {
+    
     public static let shared = DateUtils()
+    
+    public let firstWeekday = Calendar.current.firstWeekday
     
     var now : Date
     var ymdFormatter  : DateFormatter
+    var ymdhmsFormatter: DateFormatter
     var yyyyFormatter : DateFormatter
     var mmFormatter   : DateFormatter
     var ddFormatter   : DateFormatter
@@ -67,6 +71,8 @@ public class DateUtils {
         now = Date()
         ymdFormatter = DateFormatter()
         ymdFormatter.dateFormat = "yyyy-MM-dd"
+        ymdhmsFormatter = DateFormatter()
+        ymdhmsFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         yyyyFormatter = DateFormatter()
         yyyyFormatter.dateFormat = "yyyy"
         mmFormatter = DateFormatter()
@@ -90,6 +96,10 @@ public class DateUtils {
     /// Return today's date in yyyy-MM-dd format
     public var ymdToday: String {
         return ymdFormatter.string(from: now)
+    }
+    
+    public var ymdhmsNow: String {
+        return ymdhmsFormatter.string(from: now)
     }
     
     /// Return today's year in yyyy format
@@ -205,6 +215,19 @@ public class DateUtils {
             i = -1
         }
         return i
+    }
+    
+    /// Return the name of the day of the week, given a weekly calendar column index,
+    /// and using the user's preferred starting day of week.
+    /// - Parameter columnIndex: A column index, in the range of 0 - 6.
+    /// - Returns: The name of the corresponding day of the week.
+    public func dayOfWeekName(for columnIndex: Int) -> String {
+        guard columnIndex >= 0 && columnIndex <= 6 else { return "undefined" }
+        var weekdayIndex = columnIndex + firstWeekday
+        if weekdayIndex > 7 {
+            weekdayIndex -= 7
+        }
+        return DateUtils.dayOfWeekNames[weekdayIndex]
     }
     
     /// Get a short (3-letter) name of the given month.

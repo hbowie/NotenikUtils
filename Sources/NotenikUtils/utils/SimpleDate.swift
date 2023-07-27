@@ -17,23 +17,26 @@ public class SimpleDate: CustomStringConvertible, Comparable, Equatable {
     public var year = 2019
     public var month = 04
     public var day = 20
-    public var dayOfWeek = 7
     public var daysInMonth = 30
+    public var dayOfWeek = 7
+    
+    public var firstWeekday = 0
     
     public init() {
         
     }
     
-    public convenience init(year: Int, month: Int, day: Int) {
+    public convenience init(year: Int, month: Int, day: Int, firstWeekday: Int = 0) {
         self.init()
         self.year = year
         self.month = month
         self.day = day
+        self.firstWeekday = firstWeekday
         calcDaysInMonth()
         calcDayOfWeek()
     }
     
-    public convenience init(yr: Int?, mn: Int?, dy: Int?) {
+    public convenience init(yr: Int?, mn: Int?, dy: Int?, firstWeekday: Int = 0) {
         self.init()
         if let y = yr {
             year = y
@@ -50,6 +53,7 @@ public class SimpleDate: CustomStringConvertible, Comparable, Equatable {
         } else {
             day = 0
         }
+        self.firstWeekday = firstWeekday
         if goodDate {
             calcDaysInMonth()
             calcDayOfWeek()
@@ -60,7 +64,7 @@ public class SimpleDate: CustomStringConvertible, Comparable, Equatable {
     }
     
     public func copy() -> SimpleDate {
-        let copied = SimpleDate(year: year, month: month, day: day)
+        let copied = SimpleDate(year: year, month: month, day: day, firstWeekday: firstWeekday)
         return copied
     }
     
@@ -183,6 +187,19 @@ public class SimpleDate: CustomStringConvertible, Comparable, Equatable {
     
     func calcDayOfWeek() {
         dayOfWeek = DateUtils.shared.dayOfWeekForYMD(year: year, month: month, day: day)
+    }
+    
+    /// Appropriate calendar column, in range of 0 - 6, based on first weekday.
+    public var calendarColumn: Int {
+        guard goodDate else { return 0 }
+        if firstWeekday < 1 {
+            firstWeekday = Calendar.current.firstWeekday
+        }
+        var columnIndex = dayOfWeek - firstWeekday
+        if columnIndex < 0 {
+            columnIndex += 7
+        }
+        return columnIndex
     }
     
     /// Implementation of Comparable protocol.
