@@ -48,6 +48,15 @@ public class StringUtils {
         return (number, label.str)
     }
     
+    public static func websiteFromLink(str: String) -> String {
+        let pieces = str.components(separatedBy: "/")
+        if pieces.count >= 3 {
+            return pieces[2]
+        } else {
+            return str
+        }
+    }
+    
     public static func matchCounts(str1: String, str2: String) -> (Int, Int) {
         var index1 = str1.startIndex
         var index2 = str2.startIndex
