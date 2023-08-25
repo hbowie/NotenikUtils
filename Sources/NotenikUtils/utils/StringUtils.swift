@@ -880,7 +880,7 @@ public class StringUtils {
     /// path will be empty.
     /// - Parameter str: A string possibly containing a slash.
     /// - Returns: A path (possibly empty) and an item name.
-    public static func splitPath(_ str: String) -> (String, String) {
+    public static func splitPath(_ str: String, dropPathNoise: Bool = true) -> (String, String) {
         var path = ""
         var item = ""
         var slashFound = false
@@ -905,7 +905,13 @@ public class StringUtils {
             return ("", String(str[str.startIndex..<index]))
         }
         
-        path = String(str[str.startIndex..<index])
+        var startPath = str.startIndex
+        if dropPathNoise {
+            while startPath < index && (str[startPath] == "." || str[startPath] == "/") {
+                startPath = str.index(after: startPath)
+            }
+        }
+        path = String(str[startPath..<index])
         item = String(str[itemStart..<str.endIndex])
         return (path, item)
     }
