@@ -542,6 +542,8 @@ public class StringUtils {
                 if lastOut != " " {
                     fileName.append(" ")
                 }
+            } else if c == "'" {
+                fileName.append(c)
             } else if c == "." && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS")) {
                 // Drop the period on "vs."
             } else if c == "&" {
