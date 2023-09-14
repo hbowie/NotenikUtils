@@ -492,11 +492,15 @@ public class Markedup: CustomStringConvertible {
         listInProgress = " "
     }
     
-    public func startListItem(level: Int = 0) {
+    public func startListItem(klass: String? = nil, level: Int = 0) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             ensureNewLine()
-            append("<li>")
+            if klass != nil && !klass!.isEmpty {
+                append("<li class=\"\(klass!)\">")
+            } else {
+                append("<li>")
+            }
             withinListItem = true
             blocksWithinListItem = 0
         case .markdown:
