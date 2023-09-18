@@ -269,21 +269,22 @@ public class StringUtils {
     /// - Parameter from: The string to be purified.
     /// - Returns: The purified string.
     ///
-    public static func purifyPunctuation(_ from: String) -> String {
-        var out = ""
+    public static func purifyPunctuation(_ from: String, squeeze: Bool = false) -> String {
         
+        var out = ""
         var pendingSpaces = 0
         for char in from {
             if char.isWhitespace || char.isPunctuation || char == "\"" {
                 pendingSpaces += 1
             } else {
                 if pendingSpaces > 0 {
-                    out.append(" ")
+                    if !squeeze {
+                        out.append(" ")
+                    }
                     pendingSpaces = 0
                 }
                 out.append(char)
             }
-
         }
         return out
     }

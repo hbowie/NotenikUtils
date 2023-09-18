@@ -974,6 +974,24 @@ public class Markedup: CustomStringConvertible {
         append(">\(buttonText)</button>")
     }
     
+    public func checkbox(id: String? = nil, name: String? = nil, value: String? = nil, checked: Bool = false) {
+        spaceBeforeBlock()
+        append("<input type=\"checkbox\"")
+        if id != nil && !id!.isEmpty {
+            append(" id=\"\(id!)\"")
+        }
+        if name != nil && !name!.isEmpty {
+            append("  name=\"\(name!)\"")
+        }
+        if value != nil && !value!.isEmpty {
+            append("  value=\"\(value!)\"")
+        }
+        if checked {
+            append(" checked")
+        }
+        append(" />")
+    }
+    
     public func script(src: String) {
         ensureNewLine()
         writeLine("<script src=\"\(src)\" type=\"text/javascript\" />")
