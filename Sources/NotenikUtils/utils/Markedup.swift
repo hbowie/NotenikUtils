@@ -974,7 +974,11 @@ public class Markedup: CustomStringConvertible {
         append(">\(buttonText)</button>")
     }
     
-    public func checkbox(id: String? = nil, name: String? = nil, value: String? = nil, checked: Bool = false) {
+    public func checkbox(id: String? = nil,
+                         name: String? = nil,
+                         value: String? = nil,
+                         onclick: String? = nil,
+                         checked: Bool = false) {
         spaceBeforeBlock()
         append("<input type=\"checkbox\"")
         if id != nil && !id!.isEmpty {
@@ -985,6 +989,9 @@ public class Markedup: CustomStringConvertible {
         }
         if value != nil && !value!.isEmpty {
             append("  value=\"\(value!)\"")
+        }
+        if onclick != nil && !onclick!.isEmpty {
+            append(" onclick=\"\(onclick!)\"")
         }
         if checked {
             append(" checked")
@@ -999,12 +1006,12 @@ public class Markedup: CustomStringConvertible {
     
     public func startScript() {
         ensureNewLine()
-        append("<script>")
+        writeLine("<script>")
     }
     
     public func finishScript() {
         spaceBeforeBlock()
-        append("</script>")
+        writeLine("</script>")
     }
     
     public func startStrong() {
