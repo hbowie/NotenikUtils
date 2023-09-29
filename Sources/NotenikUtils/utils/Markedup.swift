@@ -1063,30 +1063,6 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 0
     }
     
-    public func startItalics() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            append("<i>")
-        case .markdown:
-            append("*")
-        case .opml:
-            break
-        }
-        emphasisPending = 1
-    }
-    
-    public func finishItalics() {
-        switch format {
-        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            append("</i>")
-        case .markdown:
-            append("*")
-        case .opml:
-            break
-        }
-        emphasisPending = 0
-    }
-    
     public func startCite(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
@@ -1196,7 +1172,7 @@ public class Markedup: CustomStringConvertible {
                     finishStrong()
                 }
                 if italic {
-                    finishItalics()
+                    finishEmphasis()
                 }
                 finishParagraph()
             } else {
