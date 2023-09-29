@@ -1196,7 +1196,7 @@ public class Markedup: CustomStringConvertible {
                     finishStrong()
                 }
                 if italic {
-                    finishItalics()
+                    finishEmphasis()
                 }
                 finishParagraph()
             } else {
