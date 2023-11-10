@@ -42,6 +42,10 @@ public class SolidString: CustomStringConvertible {
         return str
     }
     
+    public var hasData: Bool {
+        return !str.isEmpty
+    }
+    
     public var isEmpty: Bool {
         return str.isEmpty
     }
