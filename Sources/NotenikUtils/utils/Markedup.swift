@@ -179,7 +179,7 @@ public class Markedup: CustomStringConvertible {
             if epub3 {
                 writeLine("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />")
             } else {
-                writeLine("<meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=utf-8\" />")
+                writeLine("<meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=UTF-8\" />")
             }
             if title != nil && title!.count > 0 {
                 writeLine("<title>\(title!)</title>")
