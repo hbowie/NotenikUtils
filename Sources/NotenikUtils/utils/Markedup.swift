@@ -1087,6 +1087,72 @@ public class Markedup: CustomStringConvertible {
         emphasisPending = 0
     }
     
+    public func startStrikethrough() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("<s>")
+        case .markdown:
+            append("~~")
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishStrikethrough() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("</s>")
+        case .markdown:
+            append("~~")
+        case .opml:
+            break
+        }
+    }
+    
+    public func startSubscript() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("<sub>")
+        case .markdown:
+            append("~")
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishSubscript() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("</sub>")
+        case .markdown:
+            append("~")
+        case .opml:
+            break
+        }
+    }
+    
+    public func startSuperscript() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("<sup>")
+        case .markdown:
+            append("^")
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishSuperscript() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("</sup>")
+        case .markdown:
+            append("^")
+        case .opml:
+            break
+        }
+    }
+    
     public func startCite(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
