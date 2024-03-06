@@ -71,7 +71,6 @@ public class Markedup: CustomStringConvertible {
     
     public func startCompacting() {
         compacting = true
-        compacting = true
     }
     
     public func finishCompacting() {
