@@ -113,8 +113,13 @@ public class Markedup: CustomStringConvertible {
         writeLine("<?allfields?>")
     }
     
-    public func templateVariable(name: String) {
-        write("=$\(name)$=")
+    public func templateVariable(name: String, mods: String? = nil) {
+        if mods != nil && !mods!.isEmpty {
+            write("=$\(name)\(mods!)$=")
+        } else {
+            write("=$\(name)$=")
+        }
+        
     }
     
     // -----------------------------------------------------------
