@@ -22,6 +22,19 @@ public class StringUtils {
     public static let upperChars = "A"..."Z"
     public static let digits     = "0"..."9"
     
+    public static func addCommonUrlSchemes(str: String) -> String {
+
+        if str.contains("://") || str.hasPrefix("mailto:") {
+            return str
+        } else if str.contains("@") {
+            return "mailto:" + str
+        } else if str.hasPrefix("www.") || str.hasSuffix(".com") || str.hasSuffix(".org") || str.hasSuffix(".net") {
+            return "http://" + str
+        } else {
+            return str
+        }
+    }
+    
     /// Examine the passed string and separate out any preceding number from any following alphabetic label,
     /// dropping any intervening spacing and punctuation.
     /// - Parameter str: A string containing some sort of positive integer followed by some sort
