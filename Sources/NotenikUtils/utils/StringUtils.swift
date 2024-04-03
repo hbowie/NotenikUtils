@@ -22,9 +22,17 @@ public class StringUtils {
     public static let upperChars = "A"..."Z"
     public static let digits     = "0"..."9"
     
+    public static let badMailto = "mailto:message:"
+    
     public static func addCommonUrlSchemes(str: String) -> String {
 
-        if str.contains("://") || str.hasPrefix("mailto:") {
+        var link = str
+        if link.hasPrefix(StringUtils.badMailto) {
+            link.removeFirst(7)
+            return link
+        }
+            
+        if str.contains(":") {
             return str
         } else if str.contains("@") {
             return "mailto:" + str
