@@ -14,6 +14,8 @@ import Foundation
 /// A class allowing the caller to write lines to a string. 
 public class BigStringWriter: LineWriter, CustomStringConvertible {
     
+    public var useCarriageReturns = false
+    
     public init() {
         
     }
@@ -46,6 +48,9 @@ public class BigStringWriter: LineWriter, CustomStringConvertible {
     
     /// End the line.
     public func endLine() {
+        if useCarriageReturns {
+            bigString.append("\r")
+        }
         bigString.append("\n")
     }
     
