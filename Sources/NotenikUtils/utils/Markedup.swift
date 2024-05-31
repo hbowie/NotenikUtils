@@ -1535,11 +1535,11 @@ public class Markedup: CustomStringConvertible {
     public func startCode() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            if lastCodeAdded == "<pre>" {
-                writeLine("<code>")
-            } else {
+            // if lastCodeAdded == "<pre>" {
                 write("<code>")
-            }
+            // } else {
+            //     write("<code>")
+            // }
         case .markdown:
             break
         case .opml:
