@@ -39,7 +39,7 @@ public class Markedup: CustomStringConvertible {
     var lastCharWasEmphasis = false
     var emphasisPending = 0
     var lastEmphasisChar: Character = " "
-    public var listInProgress: Character = " "
+    
     public var defInProgress: Character = " "
     
     var currentIndent = 0
@@ -49,6 +49,27 @@ public class Markedup: CustomStringConvertible {
     let codeConverter = StringConverter()
     
     var compacting = false
+    
+    var listsInProgress: [Character] = []
+    
+    public var listInProgress: Character {
+        get {
+            if listsInProgress.isEmpty {
+                return " "
+            } else {
+                return listsInProgress[listsInProgress.count - 1]
+            }
+        }
+        set {
+            if newValue == " " {
+                if !listsInProgress.isEmpty {
+                    listsInProgress.removeLast()
+                }
+            } else {
+                listsInProgress.append(newValue)
+            }
+        }
+    }
     
     public init() {
         xmlConverter.addXML()
@@ -508,6 +529,7 @@ public class Markedup: CustomStringConvertible {
             withinListItem = true
             blocksWithinListItem = 0
         case .markdown:
+            ensureNewLine()
             var indent = ""
             if level > 1 {
                 indent = String(repeating: " ", count: ((level - 1) * 4))
@@ -1241,9 +1263,9 @@ public class Markedup: CustomStringConvertible {
         var htmlID = ""
         if addID {
             if idText == nil {
-                htmlID = StringUtils.toCommonFileName(text)
+                htmlID = StringUtils.autoID(text)
             } else {
-                htmlID = StringUtils.toCommonFileName(idText!)
+                htmlID = StringUtils.autoID(idText!)
             }
         }
         
@@ -1285,9 +1307,9 @@ public class Markedup: CustomStringConvertible {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             if addID {
                 if idText == nil {
-                    startHeading(level: level, id: StringUtils.toCommonFileName(text))
+                    startHeading(level: level, id: StringUtils.autoID(text))
                 } else {
-                    startHeading(level: level, id: StringUtils.toCommonFileName(idText!))
+                    startHeading(level: level, id: StringUtils.autoID(idText!))
                 }
             } else {
                 startHeading(level: level)

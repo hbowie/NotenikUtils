@@ -235,6 +235,105 @@ public class StringUtils {
         return out
     }
     
+    public static func autoID(_ from: String) -> String {
+        
+        let convertToLower = true
+        let dotDisp:   CharDisposition = .remain
+        let dashDisp:  CharDisposition = .remain
+        let spaceDisp: CharDisposition = .remove
+        let otherDisp: CharDisposition = .remove
+        
+        var id = ""
+        var pendingSpaces = 0
+
+        for char in from {
+            
+            if char.isLetter {
+                if convertToLower {
+                    append(char.lowercased(), spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+                } else {
+                    append(char, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+                }
+                
+            } else if StringUtils.isDigit(char) {
+                append(char, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+                
+            } else if char == "." {
+                disposeOf(char, disp: dotDisp, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+                
+            } else if char == "-" {
+                disposeOf(char, disp: dashDisp, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+
+            } else if isWhitespace(char) {
+                append(char, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+                
+            } else {
+                disposeOf(char, disp: otherDisp, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
+            }
+
+        }
+        
+        return id
+    }
+    
+    public static func disposeOf(_ char: Character,
+                                 disp: CharDisposition,
+                                 spaceDisp: CharDisposition,
+                                 str: inout String,
+                                 pendingSpaces: inout Int) {
+        switch disp {
+        case .remove:
+            break
+        case .remain:
+            append(char, spaceDisp: spaceDisp, str: &str, pendingSpaces: &pendingSpaces)
+        case .replaceWithDash:
+            append("-", spaceDisp: spaceDisp, str: &str, pendingSpaces: &pendingSpaces)
+        }
+    }
+    
+    public static func append(_ inStr: String, 
+                              spaceDisp: CharDisposition,
+                              str: inout String,
+                              pendingSpaces: inout Int) {
+        
+        for char in inStr {
+            append(char, spaceDisp: spaceDisp, str: &str, pendingSpaces: &pendingSpaces)
+        }
+    }
+    
+    public static func append(_ char: Character, 
+                              spaceDisp: CharDisposition,
+                              str: inout String,
+                              pendingSpaces: inout Int) {
+        
+        if char.isWhitespace {
+            if str.count == 0 {
+                // Discard leading spaces
+            } else {
+                pendingSpaces += 1
+            }
+        } else {
+            if pendingSpaces > 0 {
+                switch spaceDisp {
+                case .remove:
+                    break
+                case .remain:
+                    str.append(" ")
+                case .replaceWithDash:
+                    str.append("-")
+                }
+                pendingSpaces = 0
+            }
+            str.append(char)
+        }
+    }
+    
+    public enum CharDisposition {
+        case remove
+        case remain
+        case replaceWithDash
+    }
+    
     /// Scan for an link starting with http:// or https:// and then, if found,
     /// surround the URL with anchor start and end tags, with the href value
     /// pointing to the URL that was found. Leave any preceding or trailing
