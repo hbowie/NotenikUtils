@@ -115,9 +115,21 @@ public class StringUtils {
                 v.insert("\\", at: i)
                 i = v.index(after: i)
                 i = v.index(after: i)
+            } else if c == "\\" {
+                v.insert("\\", at: i)
+                i = v.index(after: i)
+                i = v.index(after: i)
             } else if c.isNewline {
                 v.remove(at: i)
-                v.insert(" ", at: i)
+                v.insert("n", at: i)
+                v.insert("\\", at: i)
+                i = v.index(after: i)
+                i = v.index(after: i)
+            } else if c == "\t" {
+                v.remove(at: i)
+                v.insert("t", at: i)
+                v.insert("\\", at: i)
+                i = v.index(after: i)
                 i = v.index(after: i)
             } else {
                 i = v.index(after: i)
