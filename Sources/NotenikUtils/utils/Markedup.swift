@@ -1357,7 +1357,14 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func link(text: String, path: String, title: String? = nil, style: String? = nil, klass: String? = nil, blankTarget: Bool = false) {
+    public func link(text: String,
+                     path: String,
+                     title: String? = nil,
+                     style: String? = nil,
+                     klass: String? = nil,
+                     blankTarget: Bool = false,
+                     relationship: String? = nil) {
+        
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<a href=\"" + path + "\"")
@@ -1371,7 +1378,12 @@ public class Markedup: CustomStringConvertible {
                 append(" class=\"\(klass!)\"")
             }
             if blankTarget {
-                append(" target=\"_blank\" rel=\"noopener\"")
+                append(" target=\"_blank\"")
+            }
+            if let relValue = relationship {
+                append(" rel=\"\(relValue)\"")
+            } else if blankTarget {
+                append(" rel=\"noopener\"")
             }
             append(">" + text + "</a>")
         case .markdown:
