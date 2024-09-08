@@ -1509,13 +1509,16 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func image(alt: String, path: String, title: String? = nil) {
+    public func image(alt: String, path: String, title: String? = nil, klass: String? = nil) {
         let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             append("<img src=\"\(pathFixed)\" alt=\"\(alt)\"")
             if title != nil && title!.count > 0 {
                 append(" title=\"\(title!)\"")
+            }
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
             }
             append(" />")
         case .markdown:

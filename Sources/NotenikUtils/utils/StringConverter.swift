@@ -35,7 +35,7 @@ public class StringConverter {
         add(from: "&",   to: "&amp;")
         add(from: "<",   to: "&lt;")
         add(from: ">",   to: "&gt;")
-        add(from: "...", to: "&hellip;")
+        add(from: "...", to: "&#8230;")
     }
     
     public func addXMLDecode() {
@@ -44,7 +44,7 @@ public class StringConverter {
         add(from: "&amp;",    to: "&")
         add(from: "&lt;",     to: "<")
         add(from: "&gt;",     to: ">")
-        add(from: "&hellip;", to: "...")
+        add(from: "&#8230;", to: "...")
     }
     
     /// Add conversions of various html entities back to normal straight single
