@@ -676,11 +676,18 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startDetails(summary: String) {
+    public func startDetails(summary: String, klass: String? = nil, openParm: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
-            writeLine("<details>")
+            append("<details")
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
+            }
+            if openParm != nil && !openParm!.isEmpty {
+                append(" open=\"\(openParm!)\"")
+            }
+            writeLine(">")
             if summary.count > 0 {
                 writeLine("<summary>\(summary)</summary>")
             }
