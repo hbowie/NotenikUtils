@@ -565,7 +565,7 @@ public class StringUtils {
     
     /// Extract the beginning of a long piece of text, trying to end with
     /// a complete sentence. 
-    public static func summarize(_ str: String, max: Int = 250) -> String {
+    public static func summarize(_ str: String, max: Int = 250, ellipsis: Bool = true) -> String {
         
         var end = 0
         if str.count > max {
@@ -627,8 +627,10 @@ public class StringUtils {
             return ""
         } else if sentenceCount > 0 {
             return String(str[str.startIndex..<lastSentenceEnd])
-        } else {
+        } else if ellipsis {
             return String(str[str.startIndex..<lastSpace]) + "..."
+        } else {
+            return String(str[str.startIndex..<lastSpace])
         }
     }
     
