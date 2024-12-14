@@ -404,6 +404,29 @@ public class Markedup: CustomStringConvertible {
     //
     // -----------------------------------------------------------
     
+    public func startSegment(element: String, klass: String? = nil, id: String? = nil) {
+        if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
+            spaceBeforeBlock()
+            append("<\(element)")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            if id != nil && !id!.isEmpty {
+                append(" id=\"\(id!)\"")
+            }
+            append(">")
+            newLine()
+        }
+    }
+    
+    public func finishSegment(element: String) {
+        if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
+            ensureNewLine()
+            writeLine("</\(element)>")
+            spaceAfterBlock()
+        }
+    }
+    
     public func startDiv(klass: String?, id: String? = nil) {
         if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
             spaceBeforeBlock()
