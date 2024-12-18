@@ -294,17 +294,22 @@ public class Markedup: CustomStringConvertible {
     //
     // -----------------------------------------------------------
     
-    public func header(_ text: String) {
-        startHeader()
+    public func header(_ text: String, klass: String? = nil) {
+        startHeader(klass: klass)
         writeLine(text)
         finishHeader()
     }
     
-    public func startHeader() {
+    public func startHeader(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc:
             spaceBeforeBlock()
-            writeLine("<header>")
+            append("<header")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
+            newLine()
         default:
             break
         }
@@ -320,17 +325,22 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func nav(_ text: String) {
-        startNav()
+    public func nav(_ text: String, klass: String? = nil) {
+        startNav(klass: klass)
         writeLine(text)
         finishNav()
     }
     
-    public func startNav() {
+    public func startNav(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc:
             spaceBeforeBlock()
-            writeLine("<nav>")
+            append("<nav")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
+            newLine()
         default:
             break
         }
@@ -346,17 +356,22 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func footer(_ text: String) {
-        startFooter()
+    public func footer(_ text: String, klass: String? = nil) {
+        startFooter(klass: klass)
         writeLine(text)
         finishFooter()
     }
     
-    public func startFooter() {
+    public func startFooter(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc:
             spaceBeforeBlock()
-            writeLine("<footer>")
+            append("<footer")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
+            newLine()
         default:
             break
         }
@@ -787,31 +802,19 @@ public class Markedup: CustomStringConvertible {
         finishParagraph()
     }
     
-    public func startParagraph(id: String = "") {
+    public func startParagraph(klass: String? = nil, id: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
-            if id.isEmpty {
-                append("<p>")
-            } else {
-                append("<p id=\"\(id)\">")
+            var tag = "<p"
+            if id != nil && !id!.isEmpty {
+                tag.append(" id=\"\(id!)\"")
             }
-        case .markdown:
-            ensureNewLine()
-        case .opml:
-            break
-        }
-    }
-    
-    public func startParagraph(klass: String?) {
-        switch format {
-        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
-            spaceBeforeBlock()
-            append("<p")
-            if klass != nil && klass!.count > 0 {
-                append(" class=\"\(klass!)\"")
+            if klass != nil && !klass!.isEmpty {
+                tag.append(" class=\"\(klass!)\"")
             }
-            append(">")
+            tag.append(">")
+            append(tag)
         case .markdown:
             ensureNewLine()
         case .opml:
@@ -1160,6 +1163,28 @@ public class Markedup: CustomStringConvertible {
             append("</s>")
         case .markdown:
             append("~~")
+        case .opml:
+            break
+        }
+    }
+    
+    public func startMark() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("<mark>")
+        case .markdown:
+            append("==")
+        case .opml:
+            break
+        }
+    }
+    
+    public func finishMark() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("</mark>")
+        case .markdown:
+            append("==")
         case .opml:
             break
         }
