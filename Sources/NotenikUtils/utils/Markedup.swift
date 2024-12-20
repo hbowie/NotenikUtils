@@ -522,15 +522,11 @@ public class Markedup: CustomStringConvertible {
         listInProgress = " "
     }
     
-    public func startUnorderedList(klass: String?) {
+    public func startUnorderedList(klass: String? = nil, id: String? = nil, style: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             ensureNewLine()
-            append("<ul")
-            if klass != nil && klass!.count > 0 {
-                append(" class=\"\(klass!)\"")
-            }
-            append(">")
+            startElement("ul", klass: klass, id: id, style: style)
             newLine()
         case .markdown:
             if code.count > 0 {
@@ -802,19 +798,11 @@ public class Markedup: CustomStringConvertible {
         finishParagraph()
     }
     
-    public func startParagraph(klass: String? = nil, id: String? = nil) {
+    public func startParagraph(klass: String? = nil, id: String? = nil, style: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
-            var tag = "<p"
-            if id != nil && !id!.isEmpty {
-                tag.append(" id=\"\(id!)\"")
-            }
-            if klass != nil && !klass!.isEmpty {
-                tag.append(" class=\"\(klass!)\"")
-            }
-            tag.append(">")
-            append(tag)
+            startElement("p", klass: klass, id: id, style: style)
         case .markdown:
             ensureNewLine()
         case .opml:
@@ -1649,6 +1637,22 @@ public class Markedup: CustomStringConvertible {
             break
         }
     }
+    
+    public func startElement(_ tag: String, klass: String? = nil, id: String? = nil, style: String? = nil) {
+        openTag(tag)
+        if klass != nil && !klass!.isEmpty {
+            addClass(klass!)
+        }
+        if id != nil && !id!.isEmpty {
+            addID(id!)
+        }
+        if style != nil && !style!.isEmpty {
+            addAttribute(label: "style", value: style!)
+        }
+        closeTag()
+    }
+    
+    
     
     public func openTag(_ tag: String) {
         append("<" + tag)
