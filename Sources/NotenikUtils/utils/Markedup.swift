@@ -165,7 +165,8 @@ public class Markedup: CustomStringConvertible {
                          withCSS css: String?,
                          linkToFile: Bool = false,
                          withJS js: String? = nil,
-                         epub3: Bool = false) {
+                         epub3: Bool = false,
+                         addins: [String] = []) {
         currentIndent = 0
         switch format {
         case .htmlDoc:
@@ -188,6 +189,13 @@ public class Markedup: CustomStringConvertible {
             }
             if js != nil && js!.count > 0 {
                 writeLine(js!)
+            }
+            for addin in addins {
+                if addin.hasSuffix(".css") {
+                    writeLine("<link rel=\"stylesheet\" href=\"\(addin)\" type=\"text/css\" />")
+                } else if addin.hasSuffix(".js") {
+                    writeLine("<script src=\"\(addin)\" type=\"text/javascript\"></script>")
+                }
             }
             writeLine("</head>")
             writeLine("<body>")
@@ -408,6 +416,31 @@ public class Markedup: CustomStringConvertible {
         case .htmlFragment, .htmlDoc, .xhtmlDoc:
             spaceBeforeBlock()
             writeLine("</main>")
+        default:
+            break
+        }
+    }
+    
+    public func startSection(id: String = "") {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            append("<section")
+            if id.count > 0 {
+                append(" id=\"\(id)\"")
+            }
+            append(">")
+            newLine()
+        default:
+            break
+        }
+    }
+    
+    public func finishSection() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc:
+            spaceBeforeBlock()
+            writeLine("</section>")
         default:
             break
         }
