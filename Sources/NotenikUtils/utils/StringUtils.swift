@@ -199,6 +199,8 @@ public class StringUtils {
                 if common == "a" || common == "the" || common == "an" {
                     common = ""
                 }
+            } else if c == "&" {
+                common.append("and")
             }
         }
         return common
@@ -245,6 +247,83 @@ public class StringUtils {
             index = from.index(after: index)
         }
         return out
+    }
+    
+    // Take a String and make a readable file name (without path or extension) from it
+    public static func toReadableFilename(_ from: String) -> String {
+        var str = from
+        if str.hasPrefix("http://") {
+            str.removeFirst(7)
+        } else if str.hasPrefix("https://") {
+            str.removeFirst(8)
+        }
+        var fileName = ""
+        var i = 0
+        var nextChar: Character = " "
+        var lastOut: Character = " "
+        var lastIn: Character = " "
+        for c in str {
+            
+            if str.count > (i + 1) {
+                nextChar = StringUtils.charAt(index: i + 1, str: str)
+            } else {
+                nextChar = " "
+            }
+            
+            if fileName.count > 0 {
+                lastOut = StringUtils.charAt(index: fileName.count - 1, str: fileName)
+            }
+            
+            if c.isLetter {
+                fileName.append(c)
+            } else if StringUtils.isDigit(c) {
+                fileName.append(c)
+            } else if StringUtils.isWhitespace(c) && lastOut == " " {
+                // Avoid consecutive spaces
+            } else if c == ":" && lastIn == ":" {
+                // Avoid consecutive colons
+            } else if StringUtils.isWhitespace(c) {
+                fileName.append(" ")
+            } else if c == "_" || c == "-" {
+                fileName.append(c)
+            } else if c == "\\" || c == "(" || c == ")" || c == "[" || c == "]" || c == "{" || c == "}" || c == "?" {
+                // Let's just drop some punctuation
+            } else if c == "/" {
+                if lastOut != " " {
+                    fileName.append(" ")
+                }
+            } else if c == "'" {
+                fileName.append(c)
+            } else if c == "." && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS")) {
+                // Drop the period on "vs."
+            } else if c == "&" {
+                if lastOut != " " {
+                    fileName.append(" ")
+                }
+                fileName.append("and ")
+            } else if fileName.count > 0 {
+                if nextChar == " " && lastOut != " " {
+                    fileName.append(" ")
+                }
+                fileName.append("-")
+            }
+            lastIn = c
+            i += 1
+        }
+        
+        if fileName.count > 0 {
+            if fileName.hasSuffix("-") {
+                fileName.removeLast()
+            }
+            if fileName.hasSuffix(" ") {
+                fileName.removeLast()
+            }
+            if fileName.hasSuffix(".com") || fileName.hasSuffix(".COM") {
+                fileName.removeLast(4)
+            }
+        }
+    
+        return fileName
     }
     
     public static func autoID(_ from: String) -> String {
@@ -632,83 +711,6 @@ public class StringUtils {
         } else {
             return String(str[str.startIndex..<lastSpace])
         }
-    }
-    
-    // Take a String and make a readable file name (without path or extension) from it
-    public static func toReadableFilename(_ from: String) -> String {
-        var str = from
-        if str.hasPrefix("http://") {
-            str.removeFirst(7)
-        } else if str.hasPrefix("https://") {
-            str.removeFirst(8)
-        }
-        var fileName = ""
-        var i = 0
-        var nextChar: Character = " "
-        var lastOut: Character = " "
-        var lastIn: Character = " "
-        for c in str {
-            
-            if str.count > (i + 1) {
-                nextChar = StringUtils.charAt(index: i + 1, str: str)
-            } else {
-                nextChar = " "
-            }
-            
-            if fileName.count > 0 {
-                lastOut = StringUtils.charAt(index: fileName.count - 1, str: fileName)
-            }
-            
-            if c.isLetter {
-                fileName.append(c)
-            } else if StringUtils.isDigit(c) {
-                fileName.append(c)
-            } else if StringUtils.isWhitespace(c) && lastOut == " " {
-                // Avoid consecutive spaces
-            } else if c == ":" && lastIn == ":" {
-                // Avoid consecutive colons
-            } else if StringUtils.isWhitespace(c) {
-                fileName.append(" ")
-            } else if c == "_" || c == "-" {
-                fileName.append(c)
-            } else if c == "\\" || c == "(" || c == ")" || c == "[" || c == "]" || c == "{" || c == "}" || c == "?" {
-                // Let's just drop some punctuation
-            } else if c == "/" {
-                if lastOut != " " {
-                    fileName.append(" ")
-                }
-            } else if c == "'" {
-                fileName.append(c)
-            } else if c == "." && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS")) {
-                // Drop the period on "vs."
-            } else if c == "&" {
-                if lastOut != " " {
-                    fileName.append(" ")
-                }
-                fileName.append("and ")
-            } else if fileName.count > 0 {
-                if nextChar == " " && lastOut != " " {
-                    fileName.append(" ")
-                }
-                fileName.append("-")
-            }
-            lastIn = c
-            i += 1
-        }
-        
-        if fileName.count > 0 {
-            if fileName.hasSuffix("-") {
-                fileName.removeLast()
-            }
-            if fileName.hasSuffix(" ") {
-                fileName.removeLast()
-            }
-            if fileName.hasSuffix(".com") || fileName.hasSuffix(".COM") {
-                fileName.removeLast(4)
-            }
-        }
-    
-        return fileName
     }
     
     /// Increment a passed digit or letter to its next value.
