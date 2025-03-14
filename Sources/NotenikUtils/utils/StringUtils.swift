@@ -294,8 +294,12 @@ public class StringUtils {
                 }
             } else if c == "'" {
                 fileName.append(c)
-            } else if c == "." && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS")) {
-                // Drop the period on "vs."
+            } else if c == "."
+                        // Drop the period on "vs."
+                        // && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS"))
+                        
+            {
+                // Drop all periods, starting on March 12th, 2025
             } else if c == "&" {
                 if lastOut != " " {
                     fileName.append(" ")
