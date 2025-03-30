@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2023 Herb Bowie (https://hbowie.net)
+//  Copyright © 2018 - 2025 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -251,68 +251,79 @@ public class StringUtils {
     
     // Take a String and make a readable file name (without path or extension) from it
     public static func toReadableFilename(_ from: String) -> String {
+        
+        func appendChar(_ c: SmartChar, toStr: inout String, lastOut: inout SmartChar) {
+            toStr.append(c.getChar())
+            lastOut.set(c.getChar())
+        }
+        
+        let smartSpace = SmartChar()
+        let smartDash = SmartChar("-")
         var str = from
         if str.hasPrefix("http://") {
             str.removeFirst(7)
         } else if str.hasPrefix("https://") {
             str.removeFirst(8)
         }
+        if str.hasSuffix(".com") || str.hasSuffix(".COM") {
+            str.removeLast(4)
+        }
         var fileName = ""
-        var i = 0
-        var nextChar: Character = " "
-        var lastOut: Character = " "
-        var lastIn: Character = " "
-        for c in str {
-            
-            if str.count > (i + 1) {
-                nextChar = StringUtils.charAt(index: i + 1, str: str)
+        var i = str.startIndex
+        let nextChar = SmartChar()
+        var lastOut = SmartChar()
+        let lastIn = SmartChar()
+        for char in str {
+            let c = SmartChar(char)
+            let nextIndex = str.index(after: i)
+            if nextIndex < str.endIndex {
+                nextChar.set(str[nextIndex])
             } else {
-                nextChar = " "
+                nextChar.setBlank()
             }
             
-            if fileName.count > 0 {
-                lastOut = StringUtils.charAt(index: fileName.count - 1, str: fileName)
-            }
-            
-            if c.isLetter {
-                fileName.append(c)
-            } else if StringUtils.isDigit(c) {
-                fileName.append(c)
-            } else if StringUtils.isWhitespace(c) && lastOut == " " {
+            if c.isMeaningChar {
+                appendChar(c, toStr: &fileName, lastOut: &lastOut)
+            } else if c.isWhitespace && lastOut.isWhitespace {
                 // Avoid consecutive spaces
-            } else if c == ":" && lastIn == ":" {
+            } else if c.isColon && lastIn.isColon {
                 // Avoid consecutive colons
-            } else if StringUtils.isWhitespace(c) {
-                fileName.append(" ")
-            } else if c == "_" || c == "-" {
-                fileName.append(c)
-            } else if c == "\\" || c == "(" || c == ")" || c == "[" || c == "]" || c == "{" || c == "}" || c == "?" {
+            } else if c.isWhitespace {
+                appendChar(smartSpace, toStr: &fileName, lastOut: &lastOut)
+            } else if c.isWordSep {
+                appendChar(c, toStr: &fileName, lastOut: &lastOut)
+            } else if c.isFancyPunctuation {
                 // Let's just drop some punctuation
-            } else if c == "/" {
-                if lastOut != " " {
-                    fileName.append(" ")
+            } else if c.getChar() == "/" {
+                if !lastOut.isWhitespace {
+                    appendChar(smartSpace, toStr: &fileName, lastOut: &lastOut)
                 }
-            } else if c == "'" {
-                fileName.append(c)
-            } else if c == "."
-                        // Drop the period on "vs."
-                        // && (fileName.hasSuffix("vs") || fileName.hasSuffix("VS"))
-                        
-            {
-                // Drop all periods, starting on March 12th, 2025
-            } else if c == "&" {
-                if lastOut != " " {
-                    fileName.append(" ")
+            } else if c.getChar() == "'" {
+                appendChar(c, toStr: &fileName, lastOut: &lastOut)
+            } else if c.getChar() == "." {
+                if lastOut.isWhitespace && nextChar.isWhitespace {
+                    // _._ becomes _-_
+                    appendChar(smartDash, toStr: &fileName, lastOut: &lastOut)
+                } else if !lastOut.isWhitespace && !nextChar.isWhitespace {
+                    // x.x becomes x-x
+                    appendChar(smartDash, toStr: &fileName, lastOut: &lastOut)
+                } else {
+                    // x._ or _.x becomes x_ or _x
+                }
+            } else if c.getChar() == "&" {
+                if !lastOut.isWhitespace {
+                    appendChar(smartSpace, toStr: &fileName, lastOut: &lastOut)
                 }
                 fileName.append("and ")
+                lastOut = smartSpace
             } else if fileName.count > 0 {
-                if nextChar == " " && lastOut != " " {
-                    fileName.append(" ")
+                if nextChar.isWhitespace && !lastOut.isWhitespace {
+                    appendChar(smartSpace, toStr: &fileName, lastOut: &lastOut)
                 }
-                fileName.append("-")
+                appendChar(smartDash, toStr: &fileName, lastOut: &lastOut)
             }
-            lastIn = c
-            i += 1
+            lastIn.set(c.getChar())
+            i = nextIndex
         }
         
         if fileName.count > 0 {
@@ -321,9 +332,6 @@ public class StringUtils {
             }
             if fileName.hasSuffix(" ") {
                 fileName.removeLast()
-            }
-            if fileName.hasSuffix(".com") || fileName.hasSuffix(".COM") {
-                fileName.removeLast(4)
             }
         }
     
