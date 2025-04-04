@@ -250,7 +250,7 @@ public class StringUtils {
     }
     
     // Take a String and make a readable file name (without path or extension) from it
-    public static func toReadableFilename(_ from: String) -> String {
+    public static func toReadableFilename(_ from: String, allowDots: Bool = false) -> String {
         
         func appendChar(_ c: SmartChar, toStr: inout String, lastOut: inout SmartChar) {
             toStr.append(c.getChar())
@@ -301,7 +301,9 @@ public class StringUtils {
             } else if c.getChar() == "'" {
                 appendChar(c, toStr: &fileName, lastOut: &lastOut)
             } else if c.getChar() == "." {
-                if lastOut.isWhitespace && nextChar.isWhitespace {
+                if allowDots {
+                    appendChar(c, toStr: &fileName, lastOut: &lastOut)
+                } else if lastOut.isWhitespace && nextChar.isWhitespace {
                     // _._ becomes _-_
                     appendChar(smartDash, toStr: &fileName, lastOut: &lastOut)
                 } else if !lastOut.isWhitespace && !nextChar.isWhitespace {
