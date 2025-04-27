@@ -61,8 +61,6 @@ public class NumberUtils {
     
     public static func toRoman(_ i: Int, lowercase: Bool = false) -> String {
         
-
-        
         var number = i
         var result = ""
         
@@ -80,6 +78,34 @@ public class NumberUtils {
             }
         }
         
+        return result
+    }
+    
+    public static func romanToInt(_ str: String) -> Int {
+        var result = 0
+        var index = str.startIndex
+        while index < str.endIndex {
+            let nextIndex = str.index(after: index)
+            let short = String((str[index])).lowercased()
+            var long = ""
+            if nextIndex < str.endIndex {
+                long = String((str[index...nextIndex])).lowercased()
+            }
+            var i = 0
+            while i < romanLowers.count {
+                let nextRoman = romanLowers[i]
+                if long == nextRoman {
+                    result += romanDecimals[i]
+                    index = str.index(after: nextIndex)
+                    break
+                } else if short == nextRoman {
+                    result += romanDecimals[i]
+                    index = nextIndex
+                    break
+                }
+                i += 1
+            }
+        }
         return result
     }
     
@@ -103,12 +129,28 @@ public class NumberUtils {
  
         if q > 0 && q < 26 {
             if lowercase {
-                result.insert(lowerChars[q], at: result.startIndex)
+                result.insert(lowerChars[q - 1], at: result.startIndex)
             } else {
-                result.insert(upperChars[q], at: result.startIndex)
+                result.insert(upperChars[q - 1], at: result.startIndex)
             }
         }
 
+        return result
+    }
+    
+    public static func alphaToInt(_ str: String) -> Int {
+        var result = 0
+        for c in str {
+            if c.isWhitespace && result == 0 {
+                continue
+            } else if let i = lowerChars.firstIndex(of: c) {
+                result = result * 26 + i + 1
+            } else if let i = upperChars.firstIndex(of: c) {
+                result = result * 26 + i + 1
+            } else {
+                break
+            }
+        }
         return result
     }
     
