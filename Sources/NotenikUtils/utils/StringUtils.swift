@@ -1033,7 +1033,12 @@ public class StringUtils {
     /// path will be empty.
     /// - Parameter str: A string possibly containing a slash.
     /// - Returns: A path (possibly empty) and an item name.
-    public static func splitPath(_ str: String, dropPathNoise: Bool = true) -> (String, String) {
+    public static func splitPath(_ entireStr: String, dropPathNoise: Bool = true) -> (String, String) {
+        let splits = entireStr.split(separator: "?")
+        var str = entireStr
+        if splits.count > 1 {
+            str = String(splits[0])
+        }
         var path = ""
         var item = ""
         var slashFound = false
