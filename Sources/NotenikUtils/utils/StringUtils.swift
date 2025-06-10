@@ -354,11 +354,11 @@ public class StringUtils {
         for char in from {
             
             if char.isLetter {
-                if convertToLower {
+                /* if convertToLower { */
                     append(char.lowercased(), spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
-                } else {
+                /* } else {
                     append(char, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
-                }
+                } */
                 
             } else if StringUtils.isDigit(char) {
                 append(char, spaceDisp: spaceDisp, str: &id, pendingSpaces: &pendingSpaces)
@@ -658,7 +658,10 @@ public class StringUtils {
     
     /// Extract the beginning of a long piece of text, trying to end with
     /// a complete sentence. 
-    public static func summarize(_ str: String, max: Int = 250, ellipsis: Bool = true) -> String {
+    public static func summarize(_ str: String,
+                                 max: Int = 250,
+                                 ellipsis: Bool = true,
+                                 trailingPeriod: Bool = true) -> String {
         
         var end = 0
         if str.count > max {
@@ -690,6 +693,11 @@ public class StringUtils {
             
             if currChar.isNewline {
                 lineCharsCount = 0
+                if lastChar != "." {
+                    lastSentenceEnd = str.index(after: index)
+                    sentenceCount += 1
+                    spaceCount = 0
+                }
             } else if lineCharsCount > 0 || (currChar != "#" && !currChar.isWhitespace) {
                 lineCharsCount += 1
             }
@@ -719,7 +727,13 @@ public class StringUtils {
         if blank {
             return ""
         } else if sentenceCount > 0 {
-            return String(str[str.startIndex..<lastSentenceEnd])
+            if trailingPeriod {
+                return String(str[str.startIndex..<lastSentenceEnd])
+            } else {
+                lastSentenceEnd = str.index(before: lastSentenceEnd)
+                return String(str[str.startIndex..<lastSentenceEnd])
+            }
+            
         } else if ellipsis {
             return String(str[str.startIndex..<lastSpace]) + "..."
         } else {

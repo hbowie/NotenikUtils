@@ -3,7 +3,7 @@
 //  notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2023 Herb Bowie (https://hbowie.net)
+//  Copyright © 2018 - 2025 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
