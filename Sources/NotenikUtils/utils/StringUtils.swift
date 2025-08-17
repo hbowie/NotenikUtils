@@ -663,6 +663,10 @@ public class StringUtils {
                                  ellipsis: Bool = true,
                                  trailingPeriod: Bool = true) -> String {
         
+        if str.starts(with: "https://") || str.starts(with: "http://") {
+            return StringUtils.summarizeLink(str, max: max)
+        }
+        
         var end = 0
         if str.count > max {
             end = max
@@ -739,6 +743,22 @@ public class StringUtils {
         } else {
             return String(str[str.startIndex..<lastSpace])
         }
+    }
+    
+    public static func summarizeLink(_ str: String,
+                                     max: Int = 60) -> String {
+        var summary = str
+        
+        if summary.starts(with: "https://") {
+            summary.removeFirst(8)
+        } else if summary.starts(with: "http://") {
+            summary.removeFirst(7)
+        }
+        
+        if summary.count > max {
+            summary = summary.prefix(max - 3) + "..."
+        }
+        return summary
     }
     
     /// Increment a passed digit or letter to its next value.
