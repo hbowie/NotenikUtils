@@ -661,7 +661,8 @@ public class StringUtils {
     public static func summarize(_ str: String,
                                  max: Int = 250,
                                  ellipsis: Bool = true,
-                                 trailingPeriod: Bool = true) -> String {
+                                 trailingPeriod: Bool = true,
+                                 backBefore: String = "") -> String {
         
         if str.starts(with: "https://") || str.starts(with: "http://") {
             return StringUtils.summarizeLink(str, max: max)
@@ -680,6 +681,12 @@ public class StringUtils {
         var index = str.startIndex
         var lastSentenceEnd = str.startIndex
         var lastSpace = str.startIndex
+        
+        var backBeforeParmStart = backBefore.startIndex
+        var backBeforeParmNext = backBefore.startIndex
+        var backBeforeStart = str.endIndex
+        var backBeforeMatched = 0
+        
         var i = 0
         
         var blank = true
@@ -689,6 +696,28 @@ public class StringUtils {
             
             // Get the next character following the current one.
             let currChar = str[index]
+            
+            if !backBefore.isEmpty
+                && backBeforeMatched > 0
+                && backBeforeMatched < backBefore.count
+                && currChar == backBefore[backBeforeParmNext] {
+                backBeforeMatched += 1
+                backBeforeParmNext = backBefore.index(after: backBeforeParmNext)
+            } else if backBeforeMatched > 0 && backBeforeMatched == backBefore.count {
+                //
+            } else if !backBefore.isEmpty
+                && backBeforeParmStart == backBefore.startIndex
+                && currChar == backBefore[backBeforeParmStart] {
+                backBeforeStart = index
+                backBeforeParmNext = backBefore.index(after: backBeforeParmStart)
+                backBeforeMatched = 1
+            } else if backBeforeMatched > 0 && backBeforeMatched < backBefore.count {
+                backBeforeMatched = 0
+                backBeforeParmStart = backBefore.startIndex
+                backBeforeParmNext = backBefore.startIndex
+                backBeforeStart = str.endIndex
+            }
+            
             var nextChar: Character = " "
             if i < (end - 1) {
                 let nextIndex = str.index(after: index)
@@ -730,6 +759,11 @@ public class StringUtils {
         
         if blank {
             return ""
+        } else if str.count <= max {
+            return str
+        } else if !backBefore.isEmpty
+                    && backBeforeMatched == backBefore.count {
+            return String(str[str.startIndex..<backBeforeStart])
         } else if sentenceCount > 0 {
             if trailingPeriod {
                 return String(str[str.startIndex..<lastSentenceEnd])

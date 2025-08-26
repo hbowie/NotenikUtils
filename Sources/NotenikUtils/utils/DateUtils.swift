@@ -250,6 +250,26 @@ public class DateUtils {
         return String(DateUtils.monthNames[monthNumber].prefix(3))
     }
     
+    /// Get  name of the given month.
+    ///
+    /// - Parameter monthNumberStr: A string containing the month number (1 - 12)
+    /// - Returns: The full name of the month,, or an empty string if an invalid month number.
+    public func getMonthName(for monthNumberStr: String) -> String {
+        let monthNumber = Int(monthNumberStr)
+        guard let mm = monthNumber else { return "" }
+        return getMonthName(for: mm)
+    }
+    
+    /// Get a short (3-letter) name of the given month.
+    ///
+    /// - Parameter monthNumber: The month number, in the range 1 - 12.
+    /// - Returns: The 3-character beginning of the month name,
+    ///            or an empty string if an invalid month number.
+    public func getMonthName(for monthNumber: Int) -> String {
+        guard monthNumber > 0 && monthNumber <= 12 else { return "" }
+        return DateUtils.monthNames[monthNumber]
+    }
+    
     public func getDaysInMonth(year: Int, month: Int) -> Int {
         let dateComponents = DateComponents(year: year, month: month)
         let calendar = Calendar.current
