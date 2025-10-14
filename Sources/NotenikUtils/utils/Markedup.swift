@@ -1285,7 +1285,8 @@ public class Markedup: CustomStringConvertible {
                             text: String,
                             depth: Int = 1,
                             addID: Bool = false,
-                            idText: String? = nil) {
+                            idText: String? = nil,
+                            style: String? = nil) {
         
         var adjDepth = depth
         if adjDepth < 1 {
@@ -1348,7 +1349,7 @@ public class Markedup: CustomStringConvertible {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .markdown, .netscapeBookmarks:
             if headingLevel == 0 {
-                startParagraph(id: htmlID)
+                startParagraph(id: htmlID, style: style)
                 if bold {
                     startStrong()
                 }
@@ -1356,7 +1357,7 @@ public class Markedup: CustomStringConvertible {
                     startEmphasis()
                 }
             } else {
-                startHeading(level: headingLevel, id: htmlID)
+                startHeading(level: headingLevel, id: htmlID, style: style)
             }
             write(text)
             if headingLevel == 0 {
@@ -1400,7 +1401,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startHeading(level: Int, id: String = "", klass: String? = nil) {
+    public func startHeading(level: Int, id: String = "", klass: String? = nil, style: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
@@ -1410,6 +1411,9 @@ public class Markedup: CustomStringConvertible {
             } 
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
+            }
+            if style != nil && !style!.isEmpty {
+                append(" style=\"\(style!)\"")
             }
             append(">")
         case .markdown:
