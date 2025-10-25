@@ -497,11 +497,15 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startBlockQuote() {
+    public func startBlockQuote(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
-            writeLine("<blockquote>")
+            var klassPhrase = ""
+            if klass != nil && klass!.count > 0 {
+                klassPhrase = " class=\"\(klass!)\""
+            }
+            writeLine("<blockquote\(klassPhrase)>")
         default:
             break
         }
