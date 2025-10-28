@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 1/25/19.
-//  Copyright © 2019 - 2024 Herb Bowie (https://hbowie.net)
+//  Copyright © 2019 - 2025 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -588,15 +588,19 @@ public class Markedup: CustomStringConvertible {
         listInProgress = " "
     }
     
-    public func startListItem(klass: String? = nil, level: Int = 0) {
+    public func startListItem(klass: String? = nil, id: String? = nil, level: Int = 0) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             ensureNewLine()
-            if klass != nil && !klass!.isEmpty {
-                append("<li class=\"\(klass!)\">")
-            } else {
-                append("<li>")
+            append("<li")
+            if klass != nil && klass!.count > 0 {
+                append(" class=\"\(klass!)\"")
             }
+            if id != nil && !id!.isEmpty {
+                append(" id=\"\(id!)\"")
+            }
+            writeLine(">")
+            
             withinListItem = true
             blocksWithinListItem = 0
         case .markdown:
@@ -747,13 +751,16 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startDetails(summary: String, klass: String? = nil, openParm: String? = nil) {
+    public func startDetails(summary: String, klass: String? = nil, id: String? = nil, openParm: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
             spaceBeforeBlock()
             append("<details")
             if klass != nil && klass!.count > 0 {
                 append(" class=\"\(klass!)\"")
+            }
+            if id != nil && !id!.isEmpty {
+                append(" id=\"\(id!)\"")
             }
             if openParm != nil && !openParm!.isEmpty {
                 append(" open=\"\(openParm!)\"")
