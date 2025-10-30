@@ -914,6 +914,40 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
+    public func startColGroup() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("<colgroup>")
+            newLine()
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
+    public func tableCol(style: String? = nil) {
+        var tag = "<col"
+        if style != nil && !style!.isEmpty {
+            tag.append(" style=\"\(style!)\"")
+        }
+        tag.append(">")
+        append(tag)
+        newLine()
+    }
+    
+    public func finishColGroup() {
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            append("</colgroup>")
+            newLine()
+        case .markdown:
+            break
+        case .opml:
+            break
+        }
+    }
+    
     public func startTableRow() {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
