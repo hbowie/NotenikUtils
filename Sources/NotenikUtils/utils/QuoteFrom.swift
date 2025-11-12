@@ -4,7 +4,7 @@
 //
 //  Created by Herb Bowie on 10/8/24.
 //
-//  Copyright © 2024 Herb Bowie (https://hbowie.net)
+//  Copyright © 2024 - 2025 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -16,12 +16,16 @@ import Foundation
 /// Format an attribution/citation for a quotation, generating appropriate HTML.
 public class QuoteFrom {
     
+    public static let shared = QuoteFrom()
+    
     public var author = ""
     public var pubDate = ""
     public var workType = ""
     public var workTitle = ""
     public var authorLink = ""
     public var workLink = ""
+    
+    public let workTypes = ["unknown", "Album", "Article", "Blog Post", "Book", "CD", "Comment", "Conference", "Decision", "Editorial", "Essay", "Film", "Interview", "Lecture", "Letter", "Major Work", "Minor Work", "Novel", "Obituary", "Opinion", "Paper", "Play", "Podcast", "Poem", "Preface", "Presentation", "Quotation", "Quotation from minor", "Remarks", "Sermon", "Song", "Speech", "Story", "Television Show", "Video", "Web Page", "Web Site"]
     
     public init() {
         
@@ -86,16 +90,75 @@ public class QuoteFrom {
         }
         
         if !workTitle.isEmpty {
-            writer.write(" from ")
-            if !workType.isEmpty {
-                writer.write("the \(workType) ")
+            if workType == "Quotation" || workType == "Quotation from minor" {
+                writer.write(" as quoted in ")
+                
+                // If present, remove "quoted in/from" verbiage from start of work title
+                let titleLowered = workTitle.lowercased()
+                if titleLowered.hasPrefix("quot") && (titleLowered.contains(" from ") || titleLowered.contains(" in ")) {
+                    var stage = 0
+                    var word1 = ""
+                    var word2 = ""
+                    var prefixLength = 0
+                    forEachChar: for char in titleLowered {
+                        prefixLength += 1
+                        switch stage {
+                        case 0:
+                            // looking for start of first word
+                            if !char.isWhitespace {
+                                stage  = 1
+                                word1.append(char)
+                            }
+                        case 1:
+                            // looking for end of first word
+                            if !char.isWhitespace {
+                                word1.append(char)
+                            } else if word1.hasPrefix("quot") {
+                                stage = 2
+                            } else {
+                                break forEachChar
+                            }
+                        case 2:
+                            // looking for start of second word
+                            if !char.isWhitespace {
+                                stage = 3
+                                word2.append(char)
+                            }
+                        case 3:
+                            // looking for end of second word
+                            if !char.isWhitespace {
+                                word2.append(char)
+                            } else if word2 == "from" || word2 == "in" {
+                                stage = 4
+                            } else {
+                                word2 = ""
+                                stage = 2
+                            }
+                        case 4:
+                            // looking for start of title beyond second word
+                            if !char.isWhitespace {
+                                stage = 5
+                                prefixLength -= 1
+                                break forEachChar
+                            }
+                        default:
+                            stage = 6
+                            break forEachChar
+                        } // end of stage switch
+                    } // end of leading character inspection
+                    if stage == 5 {
+                        workTitle.removeFirst(prefixLength)
+                    }
+                }
+            } else {
+                writer.write(" from ")
+                if !workType.isEmpty {
+                    writer.write("the \(workType.lowercased()) ")
+                }
             }
             var citeType: CiteType = .minor
-            switch workType.lowercased() {
-            case "", "album", "book", "cd", "decision", "film", "major", "novel", "play", "television show", "unknown", "video", "web page":
+            if isMajor(workType: workType) {
                 citeType = .major
-            default:
-                break
             }
             
             // Write out the title of the work, if we have one
@@ -108,27 +171,36 @@ public class QuoteFrom {
     
     func formatLink(writer: Markedup, link: String, text: String, citeType: CiteType, relationship: String? = nil) {
         guard !text.isEmpty else { return }
-        var pre = ""
-        var post = ""
-        switch citeType {
-        case .none:
-            break
-        case .minor:
-            pre = "&ldquo;"
-            post = "&rdquo;"
-        case .major:
-            pre = "<cite>"
-            post = "</cite>"
+        if citeType == .major {
+            writer.startCite()
+        } else if citeType == .minor {
+            writer.write("&ldquo;")
         }
-        let textPlus = pre + text + post
+        
         if link.isEmpty {
-            writer.write(textPlus)
+            writer.write(text)
         } else if link.starts(with: "https://ntnk.app") {
-            writer.link(text: textPlus, path: link, title: nil, style: nil, klass: nil, blankTarget: false, relationship: relationship)
+            writer.link(text: text, path: link, title: nil, style: nil, klass: nil, blankTarget: false, relationship: relationship)
         } else if link.starts(with: "http://") || link.starts(with: "https://") {
-            writer.link(text: textPlus, path: link, title: nil, style: nil, klass: "ext-link", blankTarget: true, relationship: relationship)
+            writer.link(text: text, path: link, title: nil, style: nil, klass: "ext-link", blankTarget: true, relationship: relationship)
         } else {
-            writer.link(text: textPlus, path: link, title: nil, style: nil, klass: nil, blankTarget: false, relationship: relationship)
+            writer.link(text: text, path: link, title: nil, style: nil, klass: nil, blankTarget: false, relationship: relationship)
+        }
+        
+        if citeType == .major {
+            writer.finishCite()
+        } else if citeType == .minor {
+            writer.write("&rdquo;")
+        }
+    }
+        
+    public func isMajor(workType: String) -> Bool {
+        let workTypeCommon = StringUtils.toCommon(workType)
+        switch workTypeCommon {
+        case "", "album", "book", "cd", "decision", "film", "majorwork", "novel", "play", "quotation", "televisionshow", "unknown", "video", "website":
+            return true
+        default:
+            return false
         }
     }
     
