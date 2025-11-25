@@ -19,9 +19,11 @@ public class QuoteFrom {
     public static let shared = QuoteFrom()
     
     public var author = ""
+    public var authorIdBasis = ""
     public var pubDate = ""
     public var workType = ""
     public var workTitle = ""
+    public var workIdBasis = ""
     public var authorLink = ""
     public var workLink = ""
     
@@ -70,6 +72,11 @@ public class QuoteFrom {
     
     public func formatFrom(writer: Markedup) {
         
+        if writer.format == .markdown {
+            formatFromInMarkdown(writer: writer)
+            return
+        }
+        
         // Start the paragraph
         writer.startParagraph(klass: "quote-from")
         
@@ -86,76 +93,13 @@ public class QuoteFrom {
             if !workTitle.isEmpty {
                 comma = ","
             }
-            writer.write(" \(pubDate)\(comma)")
+            let dateValue = FreeformDate(pubDate)
+            writer.write(" \(dateValue.dMyDate)\(comma)")
         }
         
         if !workTitle.isEmpty {
-            if workType == "Quotation" || workType == "Quotation from minor" {
-                writer.write(" as quoted in ")
-                
-                // If present, remove "quoted in/from" verbiage from start of work title
-                let titleLowered = workTitle.lowercased()
-                if titleLowered.hasPrefix("quot") && (titleLowered.contains(" from ") || titleLowered.contains(" in ")) {
-                    var stage = 0
-                    var word1 = ""
-                    var word2 = ""
-                    var prefixLength = 0
-                    forEachChar: for char in titleLowered {
-                        prefixLength += 1
-                        switch stage {
-                        case 0:
-                            // looking for start of first word
-                            if !char.isWhitespace {
-                                stage  = 1
-                                word1.append(char)
-                            }
-                        case 1:
-                            // looking for end of first word
-                            if !char.isWhitespace {
-                                word1.append(char)
-                            } else if word1.hasPrefix("quot") {
-                                stage = 2
-                            } else {
-                                break forEachChar
-                            }
-                        case 2:
-                            // looking for start of second word
-                            if !char.isWhitespace {
-                                stage = 3
-                                word2.append(char)
-                            }
-                        case 3:
-                            // looking for end of second word
-                            if !char.isWhitespace {
-                                word2.append(char)
-                            } else if word2 == "from" || word2 == "in" {
-                                stage = 4
-                            } else {
-                                word2 = ""
-                                stage = 2
-                            }
-                        case 4:
-                            // looking for start of title beyond second word
-                            if !char.isWhitespace {
-                                stage = 5
-                                prefixLength -= 1
-                                break forEachChar
-                            }
-                        default:
-                            stage = 6
-                            break forEachChar
-                        } // end of stage switch
-                    } // end of leading character inspection
-                    if stage == 5 {
-                        workTitle.removeFirst(prefixLength)
-                    }
-                }
-            } else {
-                writer.write(" from ")
-                if !workType.isEmpty {
-                    writer.write("the \(workType.lowercased()) ")
-                }
-            }
+            formatWorkTypeString(writer: writer)
+            
             var citeType: CiteType = .minor
             if isMajor(workType: workType) {
                 citeType = .major
@@ -167,6 +111,104 @@ public class QuoteFrom {
         
         // End the paragraph
         writer.finishParagraph()
+    }
+    
+    /// Format  a quote citation in Markdown, deferring any HTML conversion until later.
+    /// - Parameter writer: A Markedup writer to receive the code.
+    public func formatFromInMarkdown(writer: Markedup) {
+        guard !author.isEmpty else { return }
+        
+        // Write out the author's name, with an optional link
+        if !authorIdBasis.isEmpty {
+            writer.write("[[")
+        }
+        writer.write(authorIdBasis)
+        if !authorIdBasis.isEmpty && author != authorIdBasis {
+            writer.write("|\(author)")
+        }
+        if !authorIdBasis.isEmpty {
+            writer.write("]]")
+        }
+        
+        if !pubDate.isEmpty || !workTitle.isEmpty {
+            writer.write(",")
+        }
+        
+        // Write out the date, if we have one
+        var comma = ""
+        if !pubDate.isEmpty {
+            if !workTitle.isEmpty {
+                comma = ","
+            }
+            let dateValue = FreeformDate(pubDate)
+            writer.write(" \(dateValue.dMyDate)\(comma)")
+        }
+        
+        if !workTitle.isEmpty {
+            
+            formatWorkTypeString(writer: writer)
+ 
+            var citeType: CiteType = .minor
+            if isMajor(workType: workType) {
+                citeType = .major
+            }
+            
+            // Write out the title of the work, if we have one
+            if citeType == .major {
+                writer.write("*")
+            } else {
+                writer.write("\"")
+            }
+            
+            if !workIdBasis.isEmpty {
+                writer.write("[[")
+            }
+            
+            if !workIdBasis.isEmpty && workTitle != workIdBasis {
+                writer.write("\(workIdBasis)|\(workTitle)")
+            } else {
+                writer.write(workTitle)
+            }
+            
+            if !workIdBasis.isEmpty {
+                writer.append("]]")
+            }
+            
+            if citeType == .major {
+                writer.write("*")
+            } else {
+                writer.write("\"")
+            }
+        }
+        writer.newLine()
+    }
+    
+    public func formatWorkFromInMarkdown(writer: Markedup) {
+        guard !author.isEmpty else { return }
+        
+        // Write out the author's name, with an optional link
+        if !authorIdBasis.isEmpty {
+            writer.write("[[")
+        }
+        writer.write(authorIdBasis)
+        if !authorIdBasis.isEmpty && author != authorIdBasis {
+            writer.write("|\(author)")
+        }
+        if !authorIdBasis.isEmpty {
+            writer.write("]]")
+        }
+        
+        if !pubDate.isEmpty || !workType.isEmpty {
+            writer.write(",")
+        }
+        
+        // Write out the date, if we have one
+        if !pubDate.isEmpty {
+            let dateValue = FreeformDate(pubDate)
+            writer.write(" \(dateValue.dMyDate)")
+        }
+        
+        writer.newLine()
     }
     
     func formatLink(writer: Markedup, link: String, text: String, citeType: CiteType, relationship: String? = nil) {
@@ -191,6 +233,89 @@ public class QuoteFrom {
             writer.finishCite()
         } else if citeType == .minor {
             writer.write("&rdquo;")
+        }
+    }
+    
+    func formatWorkTypeString(writer: Markedup) {
+        switch workType {
+        case "Quotation", "Quotation from minor":
+            handleQuotation(writer: writer)
+        case "Letter":
+            handleLetter(writer: writer)
+        default:
+            writer.write(" from ")
+            if !workType.isEmpty {
+                writer.write("the \(workType.lowercased()) ")
+            }
+        }
+    }
+    
+    func handleQuotation(writer: Markedup) {
+        writer.write(" as quoted in ")
+        
+        // If present, remove "quoted in/from" verbiage from start of work title
+        let titleLowered = workTitle.lowercased()
+        if titleLowered.hasPrefix("quot") && (titleLowered.contains(" from ") || titleLowered.contains(" in ")) {
+            var stage = 0
+            var word1 = ""
+            var word2 = ""
+            var prefixLength = 0
+            forEachChar: for char in titleLowered {
+                prefixLength += 1
+                switch stage {
+                case 0:
+                    // looking for start of first word
+                    if !char.isWhitespace {
+                        stage  = 1
+                        word1.append(char)
+                    }
+                case 1:
+                    // looking for end of first word
+                    if !char.isWhitespace {
+                        word1.append(char)
+                    } else if word1.hasPrefix("quot") {
+                        stage = 2
+                    } else {
+                        break forEachChar
+                    }
+                case 2:
+                    // looking for start of second word
+                    if !char.isWhitespace {
+                        stage = 3
+                        word2.append(char)
+                    }
+                case 3:
+                    // looking for end of second word
+                    if !char.isWhitespace {
+                        word2.append(char)
+                    } else if word2 == "from" || word2 == "in" {
+                        stage = 4
+                    } else {
+                        word2 = ""
+                        stage = 2
+                    }
+                case 4:
+                    // looking for start of title beyond second word
+                    if !char.isWhitespace {
+                        stage = 5
+                        prefixLength -= 1
+                        break forEachChar
+                    }
+                default:
+                    stage = 6
+                    break forEachChar
+                } // end of stage switch
+            } // end of leading character inspection
+            if stage == 5 {
+                workTitle.removeFirst(prefixLength)
+            }
+        }
+    }
+    
+    func handleLetter(writer: Markedup) {
+        writer.write(" from the letter ")
+        if workTitle.lowercased().hasPrefix("letter ") {
+            workTitle.removeFirst(7)
         }
     }
         
