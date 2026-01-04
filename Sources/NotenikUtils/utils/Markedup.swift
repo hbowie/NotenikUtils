@@ -163,6 +163,8 @@ public class Markedup: CustomStringConvertible {
     ///   - linkToFile: If true, then interpet the CSS string as a file name, rather than the actual CSS. 
     public func startDoc(withTitle title: String?,
                          withCSS css: String?,
+                         withDesc desc: String? = nil,
+                         withAuthor author: String? = nil,
                          linkToFile: Bool = false,
                          withJS js: String? = nil,
                          epub3: Bool = false,
@@ -178,6 +180,14 @@ public class Markedup: CustomStringConvertible {
                 writeLine("<title>\(title!)</title>")
             }
             writeLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />")
+            if desc != nil && desc!.count > 0 {
+                let xmlDesc = xmlConverter.convert(from: desc!)
+                writeLine("<meta name=\"description\" content=\"\(xmlDesc)\" />")
+            }
+            if author != nil && !author!.isEmpty {
+                let xmlAuthor = xmlConverter.convert(from: author!)
+                writeLine("<meta name=\"author\" content=\"\(xmlAuthor)\" />")
+            }
             if css != nil && css!.count > 0 {
                 if linkToFile {
                     writeLine("<link rel=\"stylesheet\" href=\"\(css!)\" type=\"text/css\" />")
