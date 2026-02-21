@@ -3,7 +3,7 @@
 //  Notenik
 //
 //  Created by Herb Bowie on 11/28/18.
-//  Copyright © 2018 - 2025 Herb Bowie (https://hbowie.net)
+//  Copyright © 2018 - 2026 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -176,12 +176,29 @@ public class StringUtils {
         var common = ""
         var startingTagCount = 0
         var charsWithinTags = 0
-        for c in lower {
+        var lastChar: Character = " "
+        var nextChar: Character = " "
+        
+        var index = str.startIndex
+        
+        while index < str.endIndex {
+            
+            // Get our characters ready
+            let c: Character = lower[index]
+            let nextIndex = str.index(after: index)
+            if nextIndex < str.endIndex {
+                nextChar = str[nextIndex]
+            } else {
+                nextChar = " "
+            }
+            
             if isDigit(c) || c.isLetter {
                 common.append(c)
                 if startingTagCount > 0 {
                     charsWithinTags += 1
                 }
+            } else if lastChar == " " && nextChar == " " && (c == "<" || c == ">" || c == "=" || c == "+") {
+                common.append(c)
             } else if c == "/" && leavingSlashes {
                 common.append(c)
             } else if c == "<" {
@@ -202,6 +219,9 @@ public class StringUtils {
             } else if c == "&" {
                 common.append("and")
             }
+            
+            lastChar = c
+            index = nextIndex
         }
         return common
     }
@@ -283,6 +303,8 @@ public class StringUtils {
             }
             
             if c.isMeaningChar {
+                appendChar(c, toStr: &fileName, lastOut: &lastOut)
+            } else if c.isMeaningPunctuation {
                 appendChar(c, toStr: &fileName, lastOut: &lastOut)
             } else if c.isWhitespace && lastOut.isWhitespace {
                 // Avoid consecutive spaces

@@ -4,7 +4,7 @@
 //
 //  Created by Herb Bowie on 3/25/25.
 //
-//  Copyright © 2025 Herb Bowie (https://hbowie.net)
+//  Copyright © 2025-2026 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -31,6 +31,9 @@ public class SmartChar {
     /// Is this some ofther form of punctuation that is likely not needed to preserve the
     /// basic meaning of the string.?
     var isFancyPunctuation: Bool = false
+    
+    /// Punctuation that carries meaning
+    var isMeaningPunctuation: Bool = false
     
     /// Initialize with a space.
     public init() {
@@ -70,6 +73,7 @@ public class SmartChar {
         isColon = false
         isWordSep = false
         isFancyPunctuation = false
+        isMeaningPunctuation = false
         switch c {
         case ":":
             isColon = true
@@ -93,6 +97,8 @@ public class SmartChar {
             isFancyPunctuation = true
         case "?":
             isFancyPunctuation = true
+        case "<", ">", "+", "=", "@", "&":
+            isMeaningPunctuation = true
         default:
             break
         }
