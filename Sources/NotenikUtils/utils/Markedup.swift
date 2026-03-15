@@ -411,11 +411,16 @@ public class Markedup: CustomStringConvertible {
         finishMain()
     }
     
-    public func startMain() {
+    public func startMain(klass: String? = nil) {
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc:
             spaceBeforeBlock()
-            writeLine("<main>")
+            append("<main")
+            if klass != nil && !klass!.isEmpty {
+                append(" class=\"\(klass!)\"")
+            }
+            append(">")
+            newLine()
         default:
             break
         }
@@ -485,7 +490,7 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func startDiv(klass: String?, id: String? = nil) {
+    public func startDiv(klass: String? = nil, id: String? = nil) {
         if format == .htmlFragment || format == .htmlDoc || format == .xhtmlDoc {
             spaceBeforeBlock()
             append("<div")
@@ -1663,15 +1668,19 @@ public class Markedup: CustomStringConvertible {
         }
     }
     
-    public func horizontalRule() {
+    public func horizontalRule(klass: String? = nil, style: String? = nil) {
         switch format {
-        case .htmlFragment, .htmlDoc, .netscapeBookmarks:
+        case .htmlFragment, .htmlDoc, .netscapeBookmarks, .xhtmlDoc:
             spaceBeforeBlock()
-            writeLine("<hr />")
-            spaceAfterBlock()
-        case .xhtmlDoc:
-            spaceBeforeBlock()
-            writeLine("<hr />")
+            openTag("hr")
+            if klass != nil && !klass!.isEmpty {
+                addClass(klass!)
+            }
+            if style != nil && !style!.isEmpty {
+                addStyle(style)
+            }
+            closeTag(withSlash: true)
+            newLine()
             spaceAfterBlock()
         case .markdown:
             newLine()
@@ -1766,13 +1775,22 @@ public class Markedup: CustomStringConvertible {
         addAttribute(label: "class", value: value)
     }
     
+    public func addStyle(_ value: String?) {
+        guard value != nil else { return }
+        guard !value!.isEmpty else { return }
+        addAttribute(label: "style", value: value!)
+    }
+    
     public func addAttribute(label: String, value: String) {
         append(" \(label)=\"")
         appendXML(value)
         append("\"")
     }
     
-    public func closeTag() {
+    public func closeTag(withSlash: Bool = false) {
+        if withSlash {
+            append(" /")
+        }
         append(">")
     }
     

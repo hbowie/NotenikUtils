@@ -166,7 +166,8 @@ public class StringUtils {
     /// Convert a string to its lowest common denominator, dropping white space, punctuation,
     /// and embedded tags, converting all letters to lowercase, and dropping leading articles (a, an, the).
     ///
-    /// - Parameter str: The string to be converted.
+    /// - Parameter str: The string to be converted. Note that this should not contain any
+    ///                  Markdown or HTML formatting.
     ///
     /// - Returns: The lowest common denominator, allowing easy comparison,
     ///            and eliminating trivial differences.
@@ -174,10 +175,6 @@ public class StringUtils {
     public static func toCommon(_ str: String, leavingSlashes: Bool = false) -> String {
         let lower = str.lowercased()
         var common = ""
-        var startingTagCount = 0
-        var charsWithinTags = 0
-        var lastChar: Character = " "
-        var nextChar: Character = " "
         
         var index = str.startIndex
         
@@ -186,32 +183,13 @@ public class StringUtils {
             // Get our characters ready
             let c: Character = lower[index]
             let nextIndex = str.index(after: index)
-            if nextIndex < str.endIndex {
-                nextChar = str[nextIndex]
-            } else {
-                nextChar = " "
-            }
             
             if isDigit(c) || c.isLetter {
                 common.append(c)
-                if startingTagCount > 0 {
-                    charsWithinTags += 1
-                }
-            } else if lastChar == " " && nextChar == " " && (c == "<" || c == ">" || c == "=" || c == "+") {
+            } else if c == "+" || c == "=" || c == "<" || c == ">" {
                 common.append(c)
             } else if c == "/" && leavingSlashes {
                 common.append(c)
-            } else if c == "<" {
-                if startingTagCount == 0 {
-                    charsWithinTags = 0
-                }
-                startingTagCount += 1
-            } else if c == ">" && startingTagCount > 0 {
-                startingTagCount -= 1
-                if startingTagCount == 0 && charsWithinTags > 0 {
-                    common.removeLast(charsWithinTags)
-                    charsWithinTags = 0
-                }
             } else if c == " " {
                 if common == "a" || common == "the" || common == "an" {
                     common = ""
@@ -220,7 +198,6 @@ public class StringUtils {
                 common.append("and")
             }
             
-            lastChar = c
             index = nextIndex
         }
         return common
