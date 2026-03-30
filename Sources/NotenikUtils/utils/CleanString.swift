@@ -33,6 +33,8 @@ public class CleanString: CustomStringConvertible {
     
     var pendingSpaces = 0
     
+    var pendingDoubleQuote = false
+    
     var startingTagCount = 0
     var charsWithinTags = 0
     var element = ""
@@ -235,6 +237,8 @@ public class CleanString: CustomStringConvertible {
             }
         case "\'":
             appendSingleQuote(char, lastChar: lastChar, nextChar: nextChar)
+        case "\"":
+            appendDoubleQuote(char, lastChar: lastChar, nextChar: nextChar)
         default:
             appendMiscPunctuation(char)
         }
@@ -429,6 +433,38 @@ public class CleanString: CustomStringConvertible {
         case .html:
             if trueApostrophe {
                 _str.append("&#8217;")
+            } else {
+                _str.append(char)
+            }
+        }
+    }
+    
+    func appendDoubleQuote(_ char: Character, lastChar: Character, nextChar: Character) {
+        
+        var leftQuote = false
+        var rightQuote = false
+        if lastChar.isWhitespace && !nextChar.isPunctuation && !nextChar.isWhitespace {
+            leftQuote = true
+        } else if !lastChar.isWhitespace {
+            rightQuote = true
+        }
+        
+        switch format {
+        case .trimmed:
+            _str.append(char)
+        case .plain:
+            _str.append(char)
+        case .common:
+            break
+        case .macFileName:
+            _str.append(char)
+        case .webFileName:
+            break
+        case .html:
+            if leftQuote {
+                _str.append("&#8220;")
+            } else if rightQuote {
+                _str.append("&#8221;")
             } else {
                 _str.append(char)
             }
