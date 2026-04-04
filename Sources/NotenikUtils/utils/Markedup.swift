@@ -161,14 +161,8 @@ public class Markedup: CustomStringConvertible {
     ///   - title: The page title, if one is available.
     ///   - css: The CSS to be used, or the filename containing the CSS.
     ///   - linkToFile: If true, then interpet the CSS string as a file name, rather than the actual CSS. 
-    public func startDoc(withTitle title: String?,
-                         withCSS css: String?,
-                         withDesc desc: String? = nil,
-                         withAuthor author: String? = nil,
-                         linkToFile: Bool = false,
-                         withJS js: String? = nil,
-                         epub3: Bool = false,
-                         addins: [String] = []) {
+    public func startDoc(headInfo: MarkedupHeadInfo,
+                         epub3: Bool = false) {
         currentIndent = 0
         switch format {
         case .htmlDoc:
@@ -176,37 +170,13 @@ public class Markedup: CustomStringConvertible {
             writeLine("<html lang=\"en\">")
             writeLine("<head>")
             writeLine("<meta charset=\"utf-8\" />")
-            if title != nil && title!.count > 0 {
-                writeLine("<title>\(title!)</title>")
-            }
+            append(headInfo.titleLine)
             writeLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />")
-            if desc != nil && desc!.count > 0 {
-                let xmlDesc = xmlConverter.convert(from: desc!)
-                writeLine("<meta name=\"description\" content=\"\(xmlDesc)\" />")
-            }
-            if author != nil && !author!.isEmpty {
-                let xmlAuthor = xmlConverter.convert(from: author!)
-                writeLine("<meta name=\"author\" content=\"\(xmlAuthor)\" />")
-            }
-            if css != nil && css!.count > 0 {
-                if linkToFile {
-                    writeLine("<link rel=\"stylesheet\" href=\"\(css!)\" type=\"text/css\" />")
-                } else {
-                    writeLine("<style>")
-                    writeLine(css!)
-                    writeLine("</style>")
-                }
-            }
-            if js != nil && js!.count > 0 {
-                writeLine(js!)
-            }
-            for addin in addins {
-                if addin.hasSuffix(".css") {
-                    writeLine("<link rel=\"stylesheet\" href=\"\(addin)\" type=\"text/css\" />")
-                } else if addin.hasSuffix(".js") {
-                    writeLine("<script src=\"\(addin)\" type=\"text/javascript\"></script>")
-                }
-            }
+            append(headInfo.descriptionLine)
+            append(headInfo.authorLine)
+            append(headInfo.cssLines)
+            append(headInfo.javascriptLines)
+            append(headInfo.addInLines)
             writeLine("</head>")
             writeLine("<body>")
         case .xhtmlDoc:
@@ -224,22 +194,10 @@ public class Markedup: CustomStringConvertible {
             } else {
                 writeLine("<meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=UTF-8\" />")
             }
-            if title != nil && title!.count > 0 {
-                writeLine("<title>\(title!)</title>")
-            }
+            append(headInfo.titleLine)
             writeLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />")
-            if css != nil && css!.count > 0 {
-                if linkToFile {
-                    writeLine("<link rel=\"stylesheet\" href=\"\(css!)\" type=\"text/css\" />")
-                } else {
-                    writeLine("<style>")
-                    writeLine(css!)
-                    writeLine("</style>")
-                }
-            }
-            if js != nil && js!.count > 0 {
-                writeLine(js!)
-            }
+            append(headInfo.cssLines)
+            append(headInfo.javascriptLines)
             writeLine("</head>")
             writeLine("<body>")
         case .netscapeBookmarks:
@@ -255,9 +213,7 @@ public class Markedup: CustomStringConvertible {
             writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             writeLine("<opml version=\"2.0\">")
             writeLine("<head>")
-            if title != nil {
-                writeLine("<title>\(title!)</title>")
-            }
+            append(headInfo.titleLine)
             writeLine("</head>")
             writeLine("<body>")
         default:
@@ -2074,7 +2030,7 @@ public class Markedup: CustomStringConvertible {
     ///   - startingLastCharWasWhiteSpace: An indicator of whether the last character
     ///                                    was some sort of white space.
     public func parse(text: String, startingLastCharWasWhiteSpace: Bool) {
-        startDoc(withTitle: nil, withCSS: nil)
+        startDoc(headInfo: MarkedupHeadInfo())
         lastCharWasWhiteSpace = startingLastCharWasWhiteSpace
         whiteSpacePending = true
         if lastCharWasWhiteSpace {
