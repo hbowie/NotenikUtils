@@ -4,7 +4,7 @@
 //
 //  Created by Herb Bowie on 10/8/24.
 //
-//  Copyright © 2024 - 2025 Herb Bowie (https://hbowie.net)
+//  Copyright © 2024 - 2026 Herb Bowie (https://hbowie.net)
 //
 //  This programming code is published as open source software under the
 //  terms of the MIT License (https://opensource.org/licenses/MIT).
@@ -27,11 +27,11 @@ public class QuoteFrom {
     public var authorLink = ""
     public var workLink = ""
     
-    public let workTypes = ["unknown", "Album", "Article", "Blog Post", "Book", "CD", "Comment", "Conference", "Decision", "Editorial", "Essay", "Film", "Interview", "Lecture", "Letter", "Major Work", "Minor Work", "Novel", "Obituary", "Opinion", "Paper", "Play", "Podcast", "Poem", "Preface", "Presentation", "Quotation", "Quotation from minor", "Remarks", "Sermon", "Song", "Speech", "Story", "Television Show", "Video", "Web Page", "Web Site"]
+    public let workTypes = ["unknown", "Album", "Article", "Blog Post", "Book", "CD", "Comment", "Conference", "Decision", "Editorial", "Essay", "Film", "Interview", "Lecture", "Letter", "Liner Notes", "Major Work", "Minor Work", "Novel", "Obituary", "Opinion", "Paper", "Play", "Podcast", "Poem", "Preface", "Presentation", "Quotation", "Quotation from minor", "Remarks", "Sermon", "Song", "Speech", "Story", "Television Show", "Video", "Web Page", "Web Site"]
     
     public init() {
         
-    }
+    } 
     
     public func formatFrom(writer: Markedup, str: String) {
         
