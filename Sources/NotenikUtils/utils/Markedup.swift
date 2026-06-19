@@ -1606,6 +1606,10 @@ public class Markedup: CustomStringConvertible {
     }
     
     public func image(alt: String, path: String, title: String? = nil, klass: String? = nil) {
+        if path.hasSuffix(".mp4") || path.hasSuffix(".mov") {
+            video(path: path, klass: klass)
+            return
+        }
         let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
@@ -1619,6 +1623,20 @@ public class Markedup: CustomStringConvertible {
             append(" />")
         case .markdown:
             append("![" + alt + "](" + path + ")")
+        case .opml:
+            break
+        }
+    }
+    
+    public func video(path: String, klass: String? = nil) {
+        let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            writeLine("<video controls>")
+            writeLine("<source src=\"\(pathFixed)\" type=\"video/mp4\" />")
+            writeLine("</video>")
+        case .markdown:
+            append("![](" + path + ")")
         case .opml:
             break
         }
