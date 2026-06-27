@@ -12,7 +12,6 @@
 
 import Foundation
 
-
 /// Format an attribution/citation for a quotation, generating appropriate HTML.
 public class QuoteFrom {
     
@@ -105,8 +104,10 @@ public class QuoteFrom {
                 citeType = .major
             }
             
+            let formatter = TitleFormatter(workTitle)
+            
             // Write out the title of the work, if we have one
-            formatLink(writer: writer, link: workLink, text: workTitle, citeType: citeType)
+            formatLink(writer: writer, link: workLink, text: formatter.html, citeType: citeType)
         }
         
         // End the paragraph
@@ -164,10 +165,11 @@ public class QuoteFrom {
                 writer.write("[[")
             }
             
+            let formatter = TitleFormatter(workTitle)
             if !workIdBasis.isEmpty && workTitle != workIdBasis {
-                writer.write("\(workIdBasis)|\(workTitle)")
+                writer.write("\(workIdBasis)|\(formatter.trimmed)")
             } else {
-                writer.write(workTitle)
+                writer.write(formatter.trimmed)
             }
             
             if !workIdBasis.isEmpty {
@@ -308,6 +310,13 @@ public class QuoteFrom {
             } // end of leading character inspection
             if stage == 5 {
                 workTitle.removeFirst(prefixLength)
+            }
+            
+            if workTitle.hasSuffix(")") && workTitle.contains(" (") {
+                while !workTitle.hasSuffix("(") {
+                    workTitle.removeLast()
+                }
+                workTitle.removeLast(2)
             }
         }
     }

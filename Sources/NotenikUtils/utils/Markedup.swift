@@ -1610,6 +1610,10 @@ public class Markedup: CustomStringConvertible {
             video(path: path, klass: klass)
             return
         }
+        if path.hasSuffix(".mp3") {
+            audio(path: path, klass: klass)
+            return
+        }
         let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
         switch format {
         case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
@@ -1637,6 +1641,20 @@ public class Markedup: CustomStringConvertible {
             writeLine("</video>")
         case .markdown:
             append("![](" + path + ")")
+        case .opml:
+            break
+        }
+    }
+    
+    public func audio(path: String, klass: String? = nil) {
+        let pathFixed = path.replacingOccurrences(of: "?", with: "%3F")
+        switch format {
+        case .htmlFragment, .htmlDoc, .xhtmlDoc, .netscapeBookmarks:
+            ensureNewLine()
+            writeLine("<audio controls src=\"\(pathFixed)\">")
+            writeLine("</audio>")
+        case .markdown:
+            append("[](" + path + ")")
         case .opml:
             break
         }
