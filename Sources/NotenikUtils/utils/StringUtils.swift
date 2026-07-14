@@ -43,6 +43,66 @@ public class StringUtils {
         }
     }
     
+    public static func dropLeadingNumber(_ str: String) -> String {
+        var remaining = SolidString()
+        var wordCount = 0
+        var word = SolidString()
+        var numberPunctuationFound = false
+        var likelyDigitsFound = false
+        var possibleDigitsFound = false
+        var otherStuffFound = false
+        var doneWithNumber = false
+        for c in str {
+            remaining.append(c)
+            if doneWithNumber { continue }
+            
+            if c.isWhitespace && word.hasData {
+                wordCount += 1
+                let wordLowerd = word.str.lowercased()
+                if wordCount == 1 && (wordLowerd == "article" || wordLowerd == "section" || wordLowerd == "paragraph") {
+                    remaining = SolidString()
+                    word = SolidString()
+                    numberPunctuationFound = false
+                    likelyDigitsFound = false
+                    possibleDigitsFound = false
+                    otherStuffFound = false
+                    doneWithNumber = false
+                } else if !otherStuffFound && possibleDigitsFound && numberPunctuationFound && word.count <= 12 {
+                    remaining = SolidString()
+                    word = SolidString()
+                    doneWithNumber = true
+                } else if !otherStuffFound && likelyDigitsFound && word.count < 12 {
+                    remaining = SolidString()
+                    word = SolidString()
+                    doneWithNumber = true
+                } else {
+                    word = SolidString()
+                    doneWithNumber = true
+                }
+            } else if c.isWhitespace {
+                doneWithNumber = true
+                continue
+            } else if c == "." || c == "-" || c == ":" {
+                numberPunctuationFound = true
+                word.append(c)
+            } else if c.isASCII && c.isWholeNumber {
+                likelyDigitsFound = true
+                word.append(c)
+            } else if StringUtils.isAlpha(c) {
+                possibleDigitsFound = true
+                word.append(c)
+            } else {
+                otherStuffFound = true
+                word.append(c)
+            }
+        }
+        if remaining.isEmpty {
+            return str
+        } else {
+            return remaining.str
+        }
+    }
+    
     /// Examine the passed string and separate out any preceding number from any following alphabetic label,
     /// dropping any intervening spacing and punctuation.
     /// - Parameter str: A string containing some sort of positive integer followed by some sort
@@ -341,7 +401,7 @@ public class StringUtils {
     
     public static func autoID(_ from: String) -> String {
         
-        let convertToLower = true
+        // let convertToLower = true
         let dotDisp:   CharDisposition = .remain
         let dashDisp:  CharDisposition = .remain
         let spaceDisp: CharDisposition = .remove
