@@ -19,6 +19,7 @@ public class QuoteFrom {
     
     public var author = ""
     public var authorIdBasis = ""
+    public var authorTitle = ""
     public var pubDate = ""
     public var workType = ""
     public var workTitle = ""
@@ -39,6 +40,7 @@ public class QuoteFrom {
         
         // See what info we have
         author = ""
+        authorTitle = ""
         pubDate = ""
         workType = ""
         workTitle = ""
@@ -47,23 +49,43 @@ public class QuoteFrom {
         
         let parms = str.split(separator: "|", omittingEmptySubsequences: false)
         
-        if parms.count > 0 {
-            author = StringUtils.trim(String(parms[0]))
+        var nextParm = 0
+        
+        if parms.count > nextParm {
+            author = StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
         }
-        if parms.count > 1 {
-            pubDate = StringUtils.trim(String(parms[1]))
+        
+        if parms.count > nextParm {
+            let possibleDate = FreeformDate(String(parms[nextParm]))
+            if possibleDate.funkyDate {
+                authorTitle = StringUtils.trim(String(parms[nextParm]))
+                nextParm += 1
+            }
         }
-        if parms.count > 2 {
-            workType = StringUtils.trim(String(parms[2]).lowercased())
+        
+        if parms.count > nextParm {
+            pubDate = StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
         }
-        if parms.count > 3 {
-            workTitle = StringUtils.trim(String(parms[3]))
+        
+        if parms.count > nextParm {
+            workType =  StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
         }
-        if parms.count > 4 {
-            authorLink = StringUtils.trim(String(parms[4]))
+        
+        if parms.count > nextParm {
+            workTitle =  StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
         }
-        if parms.count > 5 {
-            workLink = StringUtils.trim(String(parms[5]))
+        
+        if parms.count > nextParm {
+            authorLink =  StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
+        }
+        if parms.count > nextParm {
+            workLink =  StringUtils.trim(String(parms[nextParm]))
+            nextParm += 1
         }
         
         formatFrom(writer: writer)
@@ -81,9 +103,19 @@ public class QuoteFrom {
         
         // Write out the author's name, with an optional link
         formatLink(writer: writer, link: authorLink, text: author, citeType: .none)
+        
+        
         var comma = ""
-        if !pubDate.isEmpty || !workTitle.isEmpty {
+        if !pubDate.isEmpty || !workTitle.isEmpty || !authorTitle.isEmpty {
             writer.write(",")
+        }
+        
+        // Write out the author's title, if we have one
+        if !authorTitle.isEmpty {
+            if !pubDate.isEmpty || !workTitle.isEmpty {
+                comma = ","
+            }
+            writer.write(" \(authorTitle)\(comma)")
         }
         
         // Write out the date, if we have one
