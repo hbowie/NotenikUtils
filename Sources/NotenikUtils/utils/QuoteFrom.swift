@@ -256,7 +256,7 @@ public class QuoteFrom {
         if link.isEmpty {
             writer.write(text)
         } else if link.starts(with: "https://ntnk.app") {
-            writer.link(text: text, path: link, title: nil, style: nil, klass: nil, blankTarget: false, relationship: relationship)
+            writer.link(text: text, path: link, title: nil, style: nil, klass: "wiki-link", blankTarget: false, relationship: relationship)
         } else if link.starts(with: "http://") || link.starts(with: "https://") {
             writer.link(text: text, path: link, title: nil, style: nil, klass: "ext-link", blankTarget: true, relationship: relationship)
         } else {
