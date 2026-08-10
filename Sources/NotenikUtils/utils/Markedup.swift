@@ -174,6 +174,7 @@ public class Markedup: CustomStringConvertible {
             writeLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />")
             append(headInfo.descriptionLine)
             append(headInfo.authorLine)
+            append(headInfo.faviconLines)
             append(headInfo.cssLines)
             append(headInfo.javascriptLines)
             append(headInfo.addInLines)

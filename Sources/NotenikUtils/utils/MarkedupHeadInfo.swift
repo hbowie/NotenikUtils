@@ -17,13 +17,14 @@ public class MarkedupHeadInfo {
     
     let xmlConverter = StringConverter()
     
-    public var title:       String? = nil
-    public var description: String? = nil
-    public var author:      String? = nil
-    public var cssCode:     String? = nil
-    public var cssFile:     String? = nil
-    public var javascript:  String? = nil
-    public var addins:      [String] = []
+    public var title:        String? = nil
+    public var description:  String? = nil
+    public var author:       String? = nil
+    public var faviconLinks: String? = nil
+    public var cssCode:      String? = nil
+    public var cssFile:      String? = nil
+    public var javascript:   String? = nil
+    public var addins:       [String] = []
     
     public init() {
         xmlConverter.addXML()
@@ -32,6 +33,7 @@ public class MarkedupHeadInfo {
     public convenience init(withTitle title: String?,
                             withDesc desc: String? = nil,
                             withAuthor author: String? = nil,
+                            faviconLinks: String? = nil,
                             cssCode: String? = nil,
                             cssFile: String? = nil,
                             withJS js: String? = nil,
@@ -40,6 +42,7 @@ public class MarkedupHeadInfo {
         self.title = title
         self.description = desc
         self.author = author
+        self.faviconLinks = faviconLinks
         self.cssCode = cssCode
         self.cssFile = cssFile
         self.javascript = js
@@ -65,6 +68,12 @@ public class MarkedupHeadInfo {
         guard !author!.isEmpty else { return "" }
         let xmlAuthor = xmlConverter.convert(from: author!)
         return "<meta name=\"author\" content=\"\(xmlAuthor)\" />\n"
+    }
+    
+    public var faviconLines: String {
+        guard faviconLinks != nil else { return "" }
+        guard !faviconLinks!.isEmpty else { return "" }
+        return faviconLinks!
     }
     
     public var cssLines: String {
