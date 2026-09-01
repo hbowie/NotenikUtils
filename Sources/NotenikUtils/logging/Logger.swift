@@ -47,6 +47,13 @@ public class Logger {
         auxLogs.remove(at: atIndex)
     }
     
+    public func debug(message: String) {
+        log(subsystem: "com.powersurgepub.notenik",
+            category: "temp",
+            level: .debug,
+            message: message)
+    }
+    
     /// Log a new event. 
     public func log (_ event: LogEvent) {
         log(subsystem: event.subsystem,
