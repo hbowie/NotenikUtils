@@ -196,7 +196,7 @@ public class DateUtils {
      Given a complete or partial day of week name, return an index value pointing to the full day of week name,
      or a negative number if no match.
      
-     - Parameter name: Possible full or partial name of a month
+     - Parameter name: Possible full or partial name of a day
      - Returns: Index value pointing to full day of week name, if a match, otherwise a negative number. Note that 1 points to Sunday, 2 to Monday, etc., since 0 points to 'n/a'
      */
     public func matchDayOfWeekName (_ name : String) -> Int {
